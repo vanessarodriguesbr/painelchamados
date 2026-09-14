@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RELATÓRIO DE CHAMADOS DETALHADOS</title>
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js para gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- SheetJS para leitura de arquivos Excel (.xlsx) -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --header-bg: #ffffff;
+            --table-header: #f1f5f9;
+            --table-hover: #f8fafc;
+            --table-zebra: #fdfdfd;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --map-fill: #cbd5e1;
+            --map-stroke: #ffffff;
+            --map-hover: #3b82f6;
+            --badge-open-bg: #fef2f2;
+            --badge-open-text: #dc2626;
+            --badge-closed-bg: #f0fdf4;
+            --badge-closed-text: #16a34a;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --primary: #3b82f6;
+            --primary-hover: #60a5fa;
+            --header-bg: #1e293b;
+            --table-header: #334155;
+            --table-hover: #2d3748;
+            --table-zebra: #182234;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            --map-fill: #475569;
+            --map-stroke: #1e293b;
+            --map-hover: #60a5fa;
+            --badge-open-bg: #451a1a;
+            --badge-open-text: #fca5a5;
+            --badge-closed-bg: #14532d;
+            --badge-closed-text: #86efac;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* HEADER FIXO */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background-color: var(--header-bg);
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+            padding: 1rem 1.5rem;
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .controls-container {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.4rem 0.75rem;
+            gap: 0.5rem;
+        }
+
+        .filter-group i {
+            color: var(--text-muted);
+        }
+
+        .filter-group select, .filter-group input {
+            border: none;
+            background: transparent;
+            color: var(--text-color);
+            font-size: 0.875rem;
+            outline: none;
+        }
+
+        .filter-group input {
+            width: 180px;
+        }
+
+        .btn-upload {
+            background-color: #16a34a;
+            color: #ffffff !important;
+            border: none;
+            padding: 0.5rem 0.85rem;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .btn-upload:hover {
+            background-color: #15803d;
+        }
+
+        .theme-toggle {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 0.5rem 0.85rem;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        /* NAV TABS */
+        nav {
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            overflow-x: auto;
+            padding: 0 1.5rem;
+        }
+
+        .nav-tab {
+            padding: 1rem 1.25rem;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+        }
+
+        .nav-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        /* MAIN CONTENT */
+        main {
+            max-width: 1400px;
+            width: 100%;
+            margin: 1.5rem auto;
+            padding: 0 1.5rem;
+            flex: 1;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* CARDS / KPIS */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .kpi-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.25rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .kpi-info h3 {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .kpi-info .kpi-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        .kpi-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            background-color: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        /* CHARTS */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.25rem;
+            box-shadow: var(--shadow);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 280px;
+            width: 100%;
+        }
+
+        /* TABLES */
+        .table-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+
+        .table-header-title {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-wrapper {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.875rem;
+        }
+
+        th {
+            position: sticky;
+            top: 0;
+            background-color: var(--table-header);
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        tr:nth-child(even) { background-color: var(--table-zebra); }
+        tr:hover { background-color: var(--table-hover); }
+
+        .badge {
+            padding: 0.25rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-open { background-color: var(--badge-open-bg); color: var(--badge-open-text); }
+        .badge-closed { background-color: var(--badge-closed-bg); color: var(--badge-closed-text); }
+
+        /* MAP */
+        .map-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 992px) { .map-layout { grid-template-columns: 1fr; } }
+
+        .map-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .svg-container { width: 100%; max-width: 480px; }
+        .uf-path { fill: var(--map-fill); stroke: var(--map-stroke); stroke-width: 1.5; cursor: pointer; }
+        .uf-path:hover, .uf-path.active-uf { fill: var(--map-hover); }
+        .uf-text { fill: #fff; font-size: 11px; font-weight: bold; pointer-events: none; text-anchor: middle; dominant-baseline: central; }
+
+        .map-tooltip {
+            position: absolute;
+            background: rgba(15, 23, 42, 0.9);
+            color: #fff;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            pointer-events: none;
+            display: none;
+            z-index: 100;
+        }
+
+        .btn-back {
+            background-color: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-notice {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-muted);
+        }
+
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border-color);
+            background-color: var(--card-bg);
+            margin-top: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER / FILTROS GLOBAIS -->
+    <header>
+        <div class="header-container">
+            <div class="header-title">
+                <i class="fa-solid fa-headset"></i>
+                <span>RELATÓRIO DE CHAMADOS DETALHADOS</span>
+            </div>
+
+            <div class="controls-container">
+                <!-- Botão de Upload Excel -->
+                <label for="excel-upload" class="btn-upload">
+                    <i class="fa-solid fa-file-excel"></i>
+                    <span>Carregar Planilha</span>
+                </label>
+                <input type="file" id="excel-upload" accept=".xlsx, .xls" onchange="handleFileUpload(event)" style="display: none;">
+
+                <!-- Filtro por Período -->
+                <div class="filter-group">
+                    <i class="fa-regular fa-calendar-days"></i>
+                    <select id="filter-periodo" onchange="applyFilters()">
+                        <option value="TODOS">Todos os Meses</option>
+                    </select>
+                </div>
+
+                <!-- Filtro por Status -->
+                <div class="filter-group">
+                    <i class="fa-solid fa-list-check"></i>
+                    <select id="filter-status" onchange="applyFilters()">
+                        <option value="TODOS">Todos os Status</option>
+                    </select>
+                </div>
+
+                <!-- Campo de Busca Global -->
+                <div class="filter-group">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="filter-search" placeholder="Buscar posto, cliente..." oninput="applyFilters()">
+                </div>
+
+                <!-- Botão Tema -->
+                <button class="theme-toggle" onclick="toggleTheme()">
+                    <i class="fa-solid fa-moon" id="theme-icon"></i>
+                    <span id="theme-text">Modo Escuro</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- NAVEGAÇÃO -->
+    <nav>
+        <div class="nav-container">
+            <button class="nav-tab active" onclick="switchTab('visao-geral', this)">
+                <i class="fa-solid fa-chart-pie"></i> Visão Geral
+            </button>
+            <button class="nav-tab" onclick="switchTab('regiao', this)">
+                <i class="fa-solid fa-map-location-dot"></i> Por Região
+            </button>
+            <button class="nav-tab" onclick="switchTab('posto', this)">
+                <i class="fa-solid fa-store"></i> Por Posto
+            </button>
+            <button class="nav-tab" onclick="switchTab('cliente', this)">
+                <i class="fa-solid fa-building"></i> Por Cliente
+            </button>
+            <button class="nav-tab" onclick="switchTab('modelo', this)">
+                <i class="fa-solid fa-microchip"></i> Por Modelo
+            </button>
+        </div>
+    </nav>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main>
+        <div id="map-tooltip" class="map-tooltip"></div>
+
+        <!-- ABA 1: VISÃO GERAL -->
+        <section id="tab-visao-geral" class="tab-content active">
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-info">
+                        <h3>Total de Chamados</h3>
+                        <div class="kpi-value" id="kpi-total">0</div>
+                    </div>
+                    <div class="kpi-icon"><i class="fa-solid fa-ticket"></i></div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-info">
+                        <h3>Encerrados</h3>
+                        <div class="kpi-value" id="kpi-encerrados" style="color: #16a34a;">0</div>
+                    </div>
+                    <div class="kpi-icon" style="background: rgba(22, 163, 74, 0.1); color: #16a34a;">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-info">
+                        <h3>Em Aberto</h3>
+                        <div class="kpi-value" id="kpi-abertos" style="color: #dc2626;">0</div>
+                    </div>
+                    <div class="kpi-icon" style="background: rgba(220, 38, 38, 0.1); color: #dc2626;">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-info">
+                        <h3>Taxa de Solução</h3>
+                        <div class="kpi-value" id="kpi-taxa">0%</div>
+                    </div>
+                    <div class="kpi-icon"><i class="fa-solid fa-percent"></i></div>
+                </div>
+            </div>
+
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <h4><i class="fa-solid fa-chart-line"></i> Chamados por Período</h4>
+                    <div class="chart-container"><canvas id="chart-meses"></canvas></div>
+                </div>
+                <div class="chart-card">
+                    <h4><i class="fa-solid fa-chart-pie"></i> Status dos Chamados</h4>
+                    <div class="chart-container"><canvas id="chart-status"></canvas></div>
+                </div>
+                <div class="chart-card">
+                    <h4><i class="fa-solid fa-ranking-star"></i> Top 5 Postos</h4>
+                    <div class="chart-container"><canvas id="chart-top-postos"></canvas></div>
+                </div>
+                <div class="chart-card">
+                    <h4><i class="fa-solid fa-laptop"></i> Chamados por Modelo</h4>
+                    <div class="chart-container"><canvas id="chart-modelos"></canvas></div>
+                </div>
+            </div>
+
+            <div class="table-card">
+                <div class="table-header-title">
+                    <h4><i class="fa-solid fa-list"></i> Todos os Chamados (<span id="count-geral">0</span>)</h4>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Chamado</th>
+                                <th>Abertura</th>
+                                <th>Posto</th>
+                                <th>Cliente</th>
+                                <th>Modelo</th>
+                                <th>Serial</th>
+                                <th>UF</th>
+                                <th>Problema</th>
+                                <th>Status</th>
+                                <th>Encerramento</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-geral">
+                            <tr><td colspan="10" class="empty-notice"><i class="fa-solid fa-file-excel fa-2x"></i><br><br>Clique no botão <strong>"Carregar Planilha"</strong> no menu superior para visualizar os dados.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ABA 2: POR REGIÃO -->
+        <section id="tab-regiao" class="tab-content">
+            <div class="map-layout">
+                <div class="map-card">
+                    <h4 style="margin-bottom: 1rem; width: 100%;"><i class="fa-solid fa-map-marked-alt"></i> Clique em um Estado (UF)</h4>
+                    <div class="svg-container">
+                        <svg viewBox="0 0 600 600" id="brazil-map">
+                            <g class="uf-group" data-uf="RR"><path class="uf-path" d="M 220,40 L 260,35 L 270,75 L 230,95 L 210,70 Z" /><text x="238" y="62" class="uf-text">RR</text></g>
+                            <g class="uf-group" data-uf="AP"><path class="uf-path" d="M 350,60 L 390,70 L 370,120 L 340,100 Z" /><text x="362" y="88" class="uf-text">AP</text></g>
+                            <g class="uf-group" data-uf="AM"><path class="uf-path" d="M 100,80 L 210,75 L 230,98 L 220,170 L 120,180 L 80,130 Z" /><text x="160" y="130" class="uf-text">AM</text></g>
+                            <g class="uf-group" data-uf="PA"><path class="uf-path" d="M 235,98 L 335,100 L 365,125 L 345,210 L 255,200 L 225,170 Z" /><text x="295" y="150" class="uf-text">PA</text></g>
+                            <g class="uf-group" data-uf="MA"><path class="uf-path" d="M 350,130 L 400,140 L 390,210 L 350,205 Z" /><text x="372" y="170" class="uf-text">MA</text></g>
+                            <g class="uf-group" data-uf="CE"><path class="uf-path" d="M 435,145 L 480,150 L 470,185 L 430,180 Z" /><text x="454" y="165" class="uf-text">CE</text></g>
+                            <g class="uf-group" data-uf="RN"><path class="uf-path" d="M 482,152 L 525,155 L 520,175 L 482,170 Z" /><text x="502" y="163" class="uf-text">RN</text></g>
+                            <g class="uf-group" data-uf="PB"><path class="uf-path" d="M 475,175 L 530,177 L 525,192 L 472,190 Z" /><text x="500" y="183" class="uf-text">PB</text></g>
+                            <g class="uf-group" data-uf="PE"><path class="uf-path" d="M 430,185 L 530,195 L 520,212 L 420,202 Z" /><text x="475" y="198" class="uf-text">PE</text></g>
+                            <g class="uf-group" data-uf="AL"><path class="uf-path" d="M 480,215 L 520,217 L 510,230 L 475,225 Z" /><text x="496" y="222" class="uf-text">AL</text></g>
+                            <g class="uf-group" data-uf="SE"><path class="uf-path" d="M 470,230 L 505,233 L 495,248 L 465,242 Z" /><text x="484" y="238" class="uf-text">SE</text></g>
+                            <g class="uf-group" data-uf="PI"><path class="uf-path" d="M 402,145 L 432,148 L 425,225 L 392,212 Z" /><text x="412" y="182" class="uf-text">PI</text></g>
+                            <g class="uf-group" data-uf="TO"><path class="uf-path" d="M 315,205 L 350,208 L 345,300 L 310,280 Z" /><text x="330" y="250" class="uf-text">TO</text></g>
+                            <g class="uf-group" data-uf="RO"><path class="uf-path" d="M 125,185 L 180,182 L 195,250 L 150,255 Z" /><text x="160" y="218" class="uf-text">RO</text></g>
+                            <g class="uf-group" data-uf="AC"><path class="uf-path" d="M 30,195 L 120,188 L 115,225 L 45,235 Z" /><text x="75" y="210" class="uf-text">AC</text></g>
+                            <g class="uf-group" data-uf="BA"><path class="uf-path" d="M 352,210 L 422,228 L 465,245 L 440,335 L 350,302 Z" /><text x="400" y="270" class="uf-text">BA</text></g>
+                            <g class="uf-group" data-uf="MT"><path class="uf-path" d="M 185,185 L 252,203 L 308,282 L 210,320 L 198,252 Z" /><text x="240" y="250" class="uf-text">MT</text></g>
+                            <g class="uf-group" data-uf="GO"><path class="uf-path" d="M 310,285 L 348,305 L 335,370 L 275,350 L 275,322 Z" /><text x="310" y="328" class="uf-text">GO</text></g>
+                            <g class="uf-group" data-uf="DF"><circle class="uf-path" cx="328" cy="325" r="10" /><text x="328" y="325" class="uf-text" style="font-size: 8px;">DF</text></g>
+                            <g class="uf-group" data-uf="MS"><path class="uf-path" d="M 208,325 L 272,352 L 255,420 L 195,385 Z" /><text x="232" y="370" class="uf-text">MS</text></g>
+                            <g class="uf-group" data-uf="MG"><path class="uf-path" d="M 338,372 L 438,338 L 430,410 L 335,420 Z" /><text x="382" y="385" class="uf-text">MG</text></g>
+                            <g class="uf-group" data-uf="ES"><path class="uf-path" d="M 440,380 L 468,382 L 458,418 L 432,412 Z" /><text x="450" y="398" class="uf-text">ES</text></g>
+                            <g class="uf-group" data-uf="RJ"><path class="uf-path" d="M 405,418 L 452,420 L 438,445 L 398,435 Z" /><text x="424" y="430" class="uf-text">RJ</text></g>
+                            <g class="uf-group" data-uf="SP"><path class="uf-path" d="M 275,355 L 332,372 L 392,430 L 295,445 L 258,422 Z" /><text x="315" y="405" class="uf-text">SP</text></g>
+                            <g class="uf-group" data-uf="PR"><path class="uf-path" d="M 252,425 L 292,448 L 278,485 L 235,465 Z" /><text x="264" y="455" class="uf-text">PR</text></g>
+                            <g class="uf-group" data-uf="SC"><path class="uf-path" d="M 240,468 L 285,488 L 272,515 L 230,495 Z" /><text x="256" y="490" class="uf-text">SC</text></g>
+                            <g class="uf-group" data-uf="RS"><path class="uf-path" d="M 228,498 L 270,518 L 245,570 L 195,540 Z" /><text x="234" y="532" class="uf-text">RS</text></g>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="table-card">
+                    <div class="table-header-title">
+                        <h4 id="title-regiao-detail"><i class="fa-solid fa-location-dot"></i> Selecione um Estado no Mapa</h4>
+                        <span class="badge badge-closed" id="badge-uf-count">0 chamados</span>
+                    </div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Chamado</th>
+                                    <th>Posto</th>
+                                    <th>Cliente</th>
+                                    <th>Modelo</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody-regiao">
+                                <tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Clique em um estado no mapa.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ABA 3: POR POSTO -->
+        <section id="tab-posto" class="tab-content">
+            <div id="posto-summary-view">
+                <div class="table-card">
+                    <div class="table-header-title">
+                        <h4><i class="fa-solid fa-store"></i> Resumo por Posto</h4>
+                    </div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Posto</th>
+                                    <th>UF</th>
+                                    <th>Total de Chamados</th>
+                                    <th>Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody-posto-summary"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div id="posto-detail-view" style="display: none;">
+                <button class="btn-back" onclick="closePostoDetail()"><i class="fa-solid fa-arrow-left"></i> Voltar</button>
+                <div class="table-card">
+                    <div class="table-header-title"><h4 id="posto-detail-title">Detalhes do Posto</h4></div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Chamado</th>
+                                    <th>Abertura</th>
+                                    <th>Cliente</th>
+                                    <th>Modelo</th>
+                                    <th>Serial</th>
+                                    <th>Problema</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody-posto-detail"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ABA 4: POR CLIENTE -->
+        <section id="tab-cliente" class="tab-content">
+            <div id="cliente-summary-view">
+                <div class="table-card">
+                    <div class="table-header-title">
+                        <h4><i class="fa-solid fa-building"></i> Resumo por Cliente</h4>
+                    </div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Cliente</th>
+                                    <th>Total de Chamados</th>
+                                    <th>Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody-cliente-summary"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div id="cliente-detail-view" style="display: none;">
+                <button class="btn-back" onclick="closeClienteDetail()"><i class="fa-solid fa-arrow-left"></i> Voltar</button>
+                <div class="table-card">
+                    <div class="table-header-title"><h4 id="cliente-detail-title">Detalhes do Cliente</h4></div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Chamado</th>
+                                    <th>Abertura</th>
+                                    <th>Posto</th>
+                                    <th>UF</th>
+                                    <th>Modelo</th>
+                                    <th>Problema</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody-cliente-detail"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ABA 5: POR MODELO -->
+        <section id="tab-modelo" class="tab-content">
+            <div id="modelo-summary-view">
+                <div class="table-card">
+                    <div class="table-header-title">
+                        <h4><i class="fa-solid fa-microchip"></i> Resumo por Modelo</h4>
+                    </div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Modelo</th>
+                                    <th>Total de Chamados</th>
+                                    <th>Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody-modelo-summary"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div id="modelo-detail-view" style="display: none;">
+                <button class="btn-back" onclick="closeModeloDetail()"><i class="fa-solid fa-arrow-left"></i> Voltar</button>
+                <div class="table-card">
+                    <div class="table-header-title"><h4 id="modelo-detail-title">Detalhes do Modelo</h4></div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Chamado</th>
+                                    <th>Abertura</th>
+                                    <th>Posto</th>
+                                    <th>Cliente</th>
+                                    <th>Serial</th>
+                                    <th>Problema</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody-modelo-detail"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        RELATÓRIO DE CHAMADOS DETALHADOS &copy; 2026
+    </footer>
+
+    <script>
+        let ALL_DATA = [];
+        let FILTERED_DATA = [];
+        let chartMeses, chartStatus, chartTopPostos, chartModelos;
+        let selectedUF = null;
+
+        const UF_NORMALIZER = { 'BH': 'MG', 'PV': 'RO' };
+
+        document.addEventListener("DOMContentLoaded", () => {
+            setupMapEvents();
+        });
+
+        // LEITURA DO EXCEL
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+                    if (json.length <= 1) {
+                        alert("Planilha vazia ou sem dados válidos.");
+                        return;
+                    }
+
+                    // Remove cabeçalho se houver
+                    if (typeof json[0][0] === 'string' && json[0][0].toLowerCase().includes('mês')) {
+                        json.shift();
+                    }
+
+                    ALL_DATA = json.filter(row => row.length > 2 && row[2]).map(row => {
+                        const rawUf = row[8] ? String(row[8]).trim().toUpperCase() : '';
+                        const ufNorm = UF_NORMALIZER[rawUf] || rawUf;
+
+                        return {
+                            mes: parseExcelDate(row[0]),
+                            dataAbertura: parseExcelDate(row[1]),
+                            chamado: String(row[2] || ''),
+                            serial: String(row[3] || ''),
+                            modelo: String(row[4] || ''),
+                            posto: String(row[5] || ''),
+                            cliente: String(row[6] || ''),
+                            sla: String(row[7] || ''),
+                            uf: ufNorm,
+                            problema: String(row[9] || ''),
+                            dataEncerramento: parseExcelDate(row[10]),
+                            status: String(row[11] || 'OUTROS').trim().toUpperCase(),
+                            solucao: String(row[12] || '')
+                        };
+                    });
+
+                    populateFilterOptions();
+                    applyFilters();
+                } catch (err) {
+                    console.error("Erro ao ler Excel:", err);
+                    alert("Erro ao ler o arquivo Excel. Verifique o formato da planilha.");
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function parseExcelDate(val) {
+            if (!val) return '';
+            if (val instanceof Date) return val.toISOString().split('T')[0];
+            if (typeof val === 'number') {
+                const dateObj = new Date((val - (25567 + 2)) * 86400 * 1000);
+                return dateObj.toISOString().split('T')[0];
+            }
+            return String(val).split(' ')[0];
+        }
+
+        function populateFilterOptions() {
+            const meses = [...new Set(ALL_DATA.map(d => d.mes))].filter(Boolean).sort();
+            const filterPeriodo = document.getElementById('filter-periodo');
+            filterPeriodo.innerHTML = '<option value="TODOS">Todos os Meses</option>' + 
+                meses.map(m => `<option value="${m}">${m}</option>`).join('');
+
+            const statusList = [...new Set(ALL_DATA.map(d => d.status))].filter(Boolean).sort();
+            const filterStatus = document.getElementById('filter-status');
+            filterStatus.innerHTML = '<option value="TODOS">Todos os Status</option>' + 
+                statusList.map(s => `<option value="${s}">${s}</option>`).join('');
+        }
+
+        function applyFilters() {
+            const periodo = document.getElementById('filter-periodo').value;
+            const status = document.getElementById('filter-status').value;
+            const search = document.getElementById('filter-search').value.toLowerCase().trim();
+
+            FILTERED_DATA = ALL_DATA.filter(item => {
+                const matchPeriodo = (periodo === 'TODOS') || (item.mes === periodo);
+                const matchStatus = (status === 'TODOS') || (item.status === status);
+                const matchSearch = !search || 
+                    item.posto.toLowerCase().includes(search) ||
+                    item.cliente.toLowerCase().includes(search) ||
+                    item.modelo.toLowerCase().includes(search) ||
+                    item.chamado.toLowerCase().includes(search) ||
+                    item.uf.toLowerCase().includes(search) ||
+                    item.problema.toLowerCase().includes(search);
+
+                return matchPeriodo && matchStatus && matchSearch;
+            });
+
+            renderVisaoGeral();
+            renderRegiaoTab();
+            renderPostoTab();
+            renderClienteTab();
+            renderModeloTab();
+        }
+
+        function renderVisaoGeral() {
+            const total = FILTERED_DATA.length;
+            const encerrados = FILTERED_DATA.filter(d => d.status === 'ENCERRADO').length;
+            const abertos = FILTERED_DATA.filter(d => d.status === 'ABERTO').length;
+            const taxa = total > 0 ? ((encerrados / total) * 100).toFixed(1) : '0';
+
+            document.getElementById('kpi-total').textContent = total;
+            document.getElementById('kpi-encerrados').textContent = encerrados;
+            document.getElementById('kpi-abertos').textContent = abertos;
+            document.getElementById('kpi-taxa').textContent = `${taxa}%`;
+            document.getElementById('count-geral').textContent = total;
+
+            const tbody = document.getElementById('tbody-geral');
+            if (total === 0) {
+                tbody.innerHTML = '<tr><td colspan="10" class="empty-notice">Nenhum registro encontrado.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = FILTERED_DATA.map(d => `
+                <tr>
+                    <td><strong>#${d.chamado}</strong></td>
+                    <td>${formatDate(d.dataAbertura)}</td>
+                    <td>${d.posto}</td>
+                    <td>${d.cliente}</td>
+                    <td>${d.modelo}</td>
+                    <td>${d.serial}</td>
+                    <td><span class="badge" style="background: var(--border-color);">${d.uf}</span></td>
+                    <td>${d.problema}</td>
+                    <td>${getStatusBadge(d.status)}</td>
+                    <td>${formatDate(d.dataEncerramento)}</td>
+                </tr>
+            `).join('');
+
+            updateCharts();
+        }
+
+        function updateCharts() {
+            if (!FILTERED_DATA) return;
+
+            // Chart Meses
+            const mesesCount = {};
+            FILTERED_DATA.forEach(d => { mesesCount[d.mes] = (mesesCount[d.mes] || 0) + 1; });
+            if (chartMeses) chartMeses.destroy();
+            chartMeses = new Chart(document.getElementById('chart-meses'), {
+                type: 'bar',
+                data: { labels: Object.keys(mesesCount), datasets: [{ label: 'Chamados', data: Object.values(mesesCount), backgroundColor: '#2563eb' }] },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+
+            // Chart Status
+            const statusCount = {};
+            FILTERED_DATA.forEach(d => { statusCount[d.status] = (statusCount[d.status] || 0) + 1; });
+            if (chartStatus) chartStatus.destroy();
+            chartStatus = new Chart(document.getElementById('chart-status'), {
+                type: 'doughnut',
+                data: { labels: Object.keys(statusCount), datasets: [{ data: Object.values(statusCount), backgroundColor: ['#16a34a', '#dc2626', '#eab308'] }] },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+
+            // Top Postos
+            const postosCount = {};
+            FILTERED_DATA.forEach(d => { postosCount[d.posto] = (postosCount[d.posto] || 0) + 1; });
+            const topPostos = Object.entries(postosCount).sort((a,b) => b[1] - a[1]).slice(0, 5);
+            if (chartTopPostos) chartTopPostos.destroy();
+            chartTopPostos = new Chart(document.getElementById('chart-top-postos'), {
+                type: 'bar',
+                data: { labels: topPostos.map(p => p[0]), datasets: [{ label: 'Chamados', data: topPostos.map(p => p[1]), backgroundColor: '#3b82f6' }] },
+                options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false }
+            });
+
+            // Modelos
+            const modelosCount = {};
+            FILTERED_DATA.forEach(d => { modelosCount[d.modelo] = (modelosCount[d.modelo] || 0) + 1; });
+            if (chartModelos) chartModelos.destroy();
+            chartModelos = new Chart(document.getElementById('chart-modelos'), {
+                type: 'pie',
+                data: { labels: Object.keys(modelosCount), datasets: [{ data: Object.values(modelosCount), backgroundColor: ['#2563eb', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'] }] },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        }
+
+        // MAPA
+        function setupMapEvents() {
+            const tooltip = document.getElementById('map-tooltip');
+            document.querySelectorAll('.uf-group').forEach(group => {
+                const uf = group.getAttribute('data-uf');
+                group.addEventListener('mousemove', (e) => {
+                    const ufCount = FILTERED_DATA.filter(d => d.uf === uf).length;
+                    tooltip.style.display = 'block';
+                    tooltip.style.left = (e.pageX + 10) + 'px';
+                    tooltip.style.top = (e.pageY + 10) + 'px';
+                    tooltip.innerHTML = `<strong>${uf}</strong><br/>Chamados: ${ufCount}`;
+                });
+                group.addEventListener('mouseleave', () => tooltip.style.display = 'none');
+                group.addEventListener('click', () => {
+                    document.querySelectorAll('.uf-path').forEach(p => p.classList.remove('active-uf'));
+                    const path = group.querySelector('.uf-path');
+                    if (path) path.classList.add('active-uf');
+                    selectedUF = uf;
+                    renderRegiaoDetail(uf);
+                });
+            });
+        }
+
+        function renderRegiaoTab() { if (selectedUF) renderRegiaoDetail(selectedUF); }
+
+        function renderRegiaoDetail(uf) {
+            const items = FILTERED_DATA.filter(d => d.uf === uf);
+            document.getElementById('title-regiao-detail').innerHTML = `<i class="fa-solid fa-location-dot"></i> Estado: ${uf}`;
+            document.getElementById('badge-uf-count').textContent = `${items.length} chamados`;
+            const tbody = document.getElementById('tbody-regiao');
+            tbody.innerHTML = items.length ? items.map(d => `
+                <tr>
+                    <td><strong>#${d.chamado}</strong></td>
+                    <td>${d.posto}</td>
+                    <td>${d.cliente}</td>
+                    <td>${d.modelo}</td>
+                    <td>${getStatusBadge(d.status)}</td>
+                </tr>
+            `).join('') : '<tr><td colspan="5" style="text-align: center;">Nenhum chamado neste estado.</td></tr>';
+        }
+
+        // ABAS POSTO, CLIENTE, MODELO
+        function renderPostoTab() {
+            const map = {};
+            FILTERED_DATA.forEach(d => { map[d.posto] = map[d.posto] || { nome: d.posto, uf: d.uf, total: 0 }; map[d.posto].total++; });
+            const tbody = document.getElementById('tbody-posto-summary');
+            tbody.innerHTML = Object.values(map).sort((a,b) => b.total - a.total).map(p => `
+                <tr>
+                    <td><strong>${p.nome}</strong></td>
+                    <td><span class="badge">${p.uf}</span></td>
+                    <td><strong>${p.total}</strong></td>
+                    <td><button class="btn-back" onclick="openPostoDetail('${escapeQuotes(p.nome)}')">Detalhar</button></td>
+                </tr>
+            `).join('');
+        }
+
+        function openPostoDetail(nome) {
+            document.getElementById('posto-summary-view').style.display = 'none';
+            document.getElementById('posto-detail-view').style.display = 'block';
+            document.getElementById('posto-detail-title').textContent = `Posto: ${nome}`;
+            const items = FILTERED_DATA.filter(d => d.posto === nome);
+            document.getElementById('tbody-posto-detail').innerHTML = items.map(d => `
+                <tr>
+                    <td><strong>#${d.chamado}</strong></td>
+                    <td>${formatDate(d.dataAbertura)}</td>
+                    <td>${d.cliente}</td>
+                    <td>${d.modelo}</td>
+                    <td>${d.serial}</td>
+                    <td>${d.problema}</td>
+                    <td>${getStatusBadge(d.status)}</td>
+                </tr>
+            `).join('');
+        }
+        function closePostoDetail() {
+            document.getElementById('posto-summary-view').style.display = 'block';
+            document.getElementById('posto-detail-view').style.display = 'none';
+        }
+
+        function renderClienteTab() {
+            const map = {};
+            FILTERED_DATA.forEach(d => { map[d.cliente] = map[d.cliente] || { nome: d.cliente, total: 0 }; map[d.cliente].total++; });
+            const tbody = document.getElementById('tbody-cliente-summary');
+            tbody.innerHTML = Object.values(map).sort((a,b) => b.total - a.total).map(c => `
+                <tr>
+                    <td><strong>${c.nome}</strong></td>
+                    <td><strong>${c.total}</strong></td>
+                    <td><button class="btn-back" onclick="openClienteDetail('${escapeQuotes(c.nome)}')">Detalhar</button></td>
+                </tr>
+            `).join('');
+        }
+
+        function openClienteDetail(nome) {
+            document.getElementById('cliente-summary-view').style.display = 'none';
+            document.getElementById('cliente-detail-view').style.display = 'block';
+            document.getElementById('cliente-detail-title').textContent = `Cliente: ${nome}`;
+            const items = FILTERED_DATA.filter(d => d.cliente === nome);
+            document.getElementById('tbody-cliente-detail').innerHTML = items.map(d => `
+                <tr>
+                    <td><strong>#${d.chamado}</strong></td>
+                    <td>${formatDate(d.dataAbertura)}</td>
+                    <td>${d.posto}</td>
+                    <td>${d.uf}</td>
+                    <td>${d.modelo}</td>
+                    <td>${d.problema}</td>
+                    <td>${getStatusBadge(d.status)}</td>
+                </tr>
+            `).join('');
+        }
+        function closeClienteDetail() {
+            document.getElementById('cliente-summary-view').style.display = 'block';
+            document.getElementById('cliente-detail-view').style.display = 'none';
+        }
+
+        function renderModeloTab() {
+            const map = {};
+            FILTERED_DATA.forEach(d => { map[d.modelo] = map[d.modelo] || { nome: d.modelo, total: 0 }; map[d.modelo].total++; });
+            const tbody = document.getElementById('tbody-modelo-summary');
+            tbody.innerHTML = Object.values(map).sort((a,b) => b.total - a.total).map(m => `
+                <tr>
+                    <td><strong>${m.nome}</strong></td>
+                    <td><strong>${m.total}</strong></td>
+                    <td><button class="btn-back" onclick="openModeloDetail('${escapeQuotes(m.nome)}')">Detalhar</button></td>
+                </tr>
+            `).join('');
+        }
+
+        function openModeloDetail(nome) {
+            document.getElementById('modelo-summary-view').style.display = 'none';
+            document.getElementById('modelo-detail-view').style.display = 'block';
+            document.getElementById('modelo-detail-title').textContent = `Modelo: ${nome}`;
+            const items = FILTERED_DATA.filter(d => d.modelo === nome);
+            document.getElementById('tbody-modelo-detail').innerHTML = items.map(d => `
+                <tr>
+                    <td><strong>#${d.chamado}</strong></td>
+                    <td>${formatDate(d.dataAbertura)}</td>
+                    <td>${d.posto}</td>
+                    <td>${d.cliente}</td>
+                    <td>${d.serial}</td>
+                    <td>${d.problema}</td>
+                    <td>${getStatusBadge(d.status)}</td>
+                </tr>
+            `).join('');
+        }
+        function closeModeloDetail() {
+            document.getElementById('modelo-summary-view').style.display = 'block';
+            document.getElementById('modelo-detail-view').style.display = 'none';
+        }
+
+        // UTILS
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const newTheme = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', newTheme);
+            document.getElementById('theme-icon').className = newTheme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+            document.getElementById('theme-text').textContent = newTheme === 'dark' ? 'Modo Claro' : 'Modo Escuro';
+            updateCharts();
+        }
+
+        function getStatusBadge(status) {
+            return status === 'ENCERRADO' 
+                ? '<span class="badge badge-closed">Encerrado</span>' 
+                : '<span class="badge badge-open">Aberto</span>';
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '-';
+            const parts = dateStr.split(' ')[0].split('-');
+            return parts.length === 3 ? `${parts[2]}/${parts[1]}/${parts[0]}` : dateStr;
+        }
+
+        function escapeQuotes(str) {
+            return str.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        }
+    </script>
+</body>
+</html>
