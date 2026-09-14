@@ -119,9 +119,7 @@
             gap: 0.5rem;
         }
 
-        .filter-group i {
-            color: var(--text-muted);
-        }
+        .filter-group i { color: var(--text-muted); }
 
         .filter-group select, .filter-group input {
             border: none;
@@ -131,9 +129,7 @@
             outline: none;
         }
 
-        .filter-group input {
-            width: 180px;
-        }
+        .filter-group input { width: 180px; }
 
         .btn-upload {
             background-color: #16a34a;
@@ -149,9 +145,7 @@
             font-size: 0.875rem;
         }
 
-        .btn-upload:hover {
-            background-color: #15803d;
-        }
+        .btn-upload:hover { background-color: #15803d; }
 
         .theme-toggle {
             background-color: var(--bg-color);
@@ -210,13 +204,8 @@
             flex: 1;
         }
 
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
 
         /* CARDS / KPIS */
         .kpi-grid {
@@ -422,12 +411,12 @@
                     <i class="fa-solid fa-file-excel"></i>
                     <span>Carregar Planilha</span>
                 </label>
-                <input type="file" id="excel-upload" accept=".xlsx, .xls" onchange="handleFileUpload(event)" style="display: none;">
+                <input type="file" id="excel-upload" accept=".xlsx, .xls" style="display: none;">
 
                 <!-- Filtro por Período -->
                 <div class="filter-group">
                     <i class="fa-regular fa-calendar-days"></i>
-                    <select id="filter-periodo" onchange="applyFilters()">
+                    <select id="filter-periodo">
                         <option value="TODOS">Todos os Meses</option>
                     </select>
                 </div>
@@ -435,7 +424,7 @@
                 <!-- Filtro por Status -->
                 <div class="filter-group">
                     <i class="fa-solid fa-list-check"></i>
-                    <select id="filter-status" onchange="applyFilters()">
+                    <select id="filter-status">
                         <option value="TODOS">Todos os Status</option>
                     </select>
                 </div>
@@ -443,11 +432,11 @@
                 <!-- Campo de Busca Global -->
                 <div class="filter-group">
                     <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" id="filter-search" placeholder="Buscar posto, cliente..." oninput="applyFilters()">
+                    <input type="text" id="filter-search" placeholder="Buscar posto, cliente...">
                 </div>
 
                 <!-- Botão Tema -->
-                <button class="theme-toggle" onclick="toggleTheme()">
+                <button class="theme-toggle" id="theme-btn">
                     <i class="fa-solid fa-moon" id="theme-icon"></i>
                     <span id="theme-text">Modo Escuro</span>
                 </button>
@@ -458,19 +447,19 @@
     <!-- NAVEGAÇÃO -->
     <nav>
         <div class="nav-container">
-            <button class="nav-tab active" onclick="switchTab('visao-geral', this)">
+            <button class="nav-tab active" data-tab="visao-geral">
                 <i class="fa-solid fa-chart-pie"></i> Visão Geral
             </button>
-            <button class="nav-tab" onclick="switchTab('regiao', this)">
+            <button class="nav-tab" data-tab="regiao">
                 <i class="fa-solid fa-map-location-dot"></i> Por Região
             </button>
-            <button class="nav-tab" onclick="switchTab('posto', this)">
+            <button class="nav-tab" data-tab="posto">
                 <i class="fa-solid fa-store"></i> Por Posto
             </button>
-            <button class="nav-tab" onclick="switchTab('cliente', this)">
+            <button class="nav-tab" data-tab="cliente">
                 <i class="fa-solid fa-building"></i> Por Cliente
             </button>
-            <button class="nav-tab" onclick="switchTab('modelo', this)">
+            <button class="nav-tab" data-tab="modelo">
                 <i class="fa-solid fa-microchip"></i> Por Modelo
             </button>
         </div>
@@ -557,7 +546,7 @@
                             </tr>
                         </thead>
                         <tbody id="tbody-geral">
-                            <tr><td colspan="10" class="empty-notice"><i class="fa-solid fa-file-excel fa-2x"></i><br><br>Clique no botão <strong>"Carregar Planilha"</strong> no menu superior para visualizar os dados.</td></tr>
+                            <tr><td colspan="10" class="empty-notice"><i class="fa-solid fa-spinner fa-spin fa-2x"></i><br><br>Carregando dados do Firebase...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -650,7 +639,7 @@
                 </div>
             </div>
             <div id="posto-detail-view" style="display: none;">
-                <button class="btn-back" onclick="closePostoDetail()"><i class="fa-solid fa-arrow-left"></i> Voltar</button>
+                <button class="btn-back" id="btn-back-posto"><i class="fa-solid fa-arrow-left"></i> Voltar</button>
                 <div class="table-card">
                     <div class="table-header-title"><h4 id="posto-detail-title">Detalhes do Posto</h4></div>
                     <div class="table-wrapper">
@@ -695,7 +684,7 @@
                 </div>
             </div>
             <div id="cliente-detail-view" style="display: none;">
-                <button class="btn-back" onclick="closeClienteDetail()"><i class="fa-solid fa-arrow-left"></i> Voltar</button>
+                <button class="btn-back" id="btn-back-cliente"><i class="fa-solid fa-arrow-left"></i> Voltar</button>
                 <div class="table-card">
                     <div class="table-header-title"><h4 id="cliente-detail-title">Detalhes do Cliente</h4></div>
                     <div class="table-wrapper">
@@ -740,7 +729,7 @@
                 </div>
             </div>
             <div id="modelo-detail-view" style="display: none;">
-                <button class="btn-back" onclick="closeModeloDetail()"><i class="fa-solid fa-arrow-left"></i> Voltar</button>
+                <button class="btn-back" id="btn-back-modelo"><i class="fa-solid fa-arrow-left"></i> Voltar</button>
                 <div class="table-card">
                     <div class="table-header-title"><h4 id="modelo-detail-title">Detalhes do Modelo</h4></div>
                     <div class="table-wrapper">
@@ -768,7 +757,28 @@
         RELATÓRIO DE CHAMADOS DETALHADOS &copy; 2026
     </footer>
 
-    <script>
+    <!-- INTEGRAÇÃO COM FIREBASE -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Configuração do seu projeto Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyC3So20Zjzhy7UlVY5JFfRl5l00NlzMxV8",
+            authDomain: "painel-chamados-fa2d8.firebaseapp.com",
+            projectId: "painel-chamados-fa2d8",
+            storageBucket: "painel-chamados-fa2d8.firebasestorage.app",
+            messagingSenderId: "271357369748",
+            appId: "1:271357369748:web:d5ea6c07e4d5f2abae4381",
+            measurementId: "G-RJRG3KX85K"
+        };
+
+        // Inicializa o Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const db = getFirestore(app);
+
         let ALL_DATA = [];
         let FILTERED_DATA = [];
         let chartMeses, chartStatus, chartTopPostos, chartModelos;
@@ -776,17 +786,48 @@
 
         const UF_NORMALIZER = { 'BH': 'MG', 'PV': 'RO' };
 
-        document.addEventListener("DOMContentLoaded", () => {
-            setupMapEvents();
-        });
+        // Carrega os dados salvos no Firebase assim que a página é aberta
+        async function loadDataFromFirebase() {
+            try {
+                const docRef = doc(db, "dashboards", "chamados");
+                const docSnap = await getDoc(docRef);
 
-        // LEITURA DO EXCEL
-        function handleFileUpload(event) {
+                if (docSnap.exists()) {
+                    ALL_DATA = docSnap.data().records || [];
+                    populateFilterOptions();
+                    applyFilters();
+                } else {
+                    document.getElementById('tbody-geral').innerHTML = 
+                        '<tr><td colspan="10" class="empty-notice"><i class="fa-solid fa-file-excel fa-2x"></i><br><br>Nenhum dado encontrado no Firebase.<br>Clique no botão <strong>"Carregar Planilha"</strong> acima para enviar os dados.</td></tr>';
+                }
+            } catch (err) {
+                console.error("Erro ao carregar dados do Firebase:", err);
+                document.getElementById('tbody-geral').innerHTML = 
+                    '<tr><td colspan="10" class="empty-notice"><i class="fa-solid fa-file-excel fa-2x"></i><br><br>Clique no botão <strong>"Carregar Planilha"</strong> no menu superior para enviar e carregar os dados.</td></tr>';
+            }
+        }
+
+        // Salva os dados processados no Firebase
+        async function saveDataToFirebase(records) {
+            try {
+                await setDoc(doc(db, "dashboards", "chamados"), {
+                    updatedAt: new Date().toISOString(),
+                    records: records
+                });
+                alert("Dados salvos com sucesso no Firebase!");
+            } catch (err) {
+                console.error("Erro ao salvar no Firebase:", err);
+                alert("Os dados foram carregados localmente, mas não foi possível salvar no Firebase. Verifique as regras do Firestore.");
+            }
+        }
+
+        // LEITURA E UPLOAD DE EXCEL
+        document.getElementById('excel-upload').addEventListener('change', function(event) {
             const file = event.target.files[0];
             if (!file) return;
 
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = async function(e) {
                 try {
                     const data = new Uint8Array(e.target.result);
                     const workbook = XLSX.read(data, { type: 'array' });
@@ -798,7 +839,6 @@
                         return;
                     }
 
-                    // Remove cabeçalho se houver
                     if (typeof json[0][0] === 'string' && json[0][0].toLowerCase().includes('mês')) {
                         json.shift();
                     }
@@ -826,13 +866,14 @@
 
                     populateFilterOptions();
                     applyFilters();
+                    await saveDataToFirebase(ALL_DATA);
                 } catch (err) {
                     console.error("Erro ao ler Excel:", err);
-                    alert("Erro ao ler o arquivo Excel. Verifique o formato da planilha.");
+                    alert("Erro ao ler o arquivo Excel. Verifique a estrutura da planilha.");
                 }
             };
             reader.readAsArrayBuffer(file);
-        }
+        });
 
         function parseExcelDate(val) {
             if (!val) return '';
@@ -921,7 +962,6 @@
         function updateCharts() {
             if (!FILTERED_DATA) return;
 
-            // Chart Meses
             const mesesCount = {};
             FILTERED_DATA.forEach(d => { mesesCount[d.mes] = (mesesCount[d.mes] || 0) + 1; });
             if (chartMeses) chartMeses.destroy();
@@ -931,7 +971,6 @@
                 options: { responsive: true, maintainAspectRatio: false }
             });
 
-            // Chart Status
             const statusCount = {};
             FILTERED_DATA.forEach(d => { statusCount[d.status] = (statusCount[d.status] || 0) + 1; });
             if (chartStatus) chartStatus.destroy();
@@ -941,7 +980,6 @@
                 options: { responsive: true, maintainAspectRatio: false }
             });
 
-            // Top Postos
             const postosCount = {};
             FILTERED_DATA.forEach(d => { postosCount[d.posto] = (postosCount[d.posto] || 0) + 1; });
             const topPostos = Object.entries(postosCount).sort((a,b) => b[1] - a[1]).slice(0, 5);
@@ -952,7 +990,6 @@
                 options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false }
             });
 
-            // Modelos
             const modelosCount = {};
             FILTERED_DATA.forEach(d => { modelosCount[d.modelo] = (modelosCount[d.modelo] || 0) + 1; });
             if (chartModelos) chartModelos.destroy();
@@ -1014,9 +1051,13 @@
                     <td><strong>${p.nome}</strong></td>
                     <td><span class="badge">${p.uf}</span></td>
                     <td><strong>${p.total}</strong></td>
-                    <td><button class="btn-back" onclick="openPostoDetail('${escapeQuotes(p.nome)}')">Detalhar</button></td>
+                    <td><button class="btn-back btn-posto-detail" data-nome="${escapeQuotes(p.nome)}">Detalhar</button></td>
                 </tr>
             `).join('');
+
+            document.querySelectorAll('.btn-posto-detail').forEach(btn => {
+                btn.addEventListener('click', (e) => openPostoDetail(e.target.getAttribute('data-nome')));
+            });
         }
 
         function openPostoDetail(nome) {
@@ -1036,10 +1077,6 @@
                 </tr>
             `).join('');
         }
-        function closePostoDetail() {
-            document.getElementById('posto-summary-view').style.display = 'block';
-            document.getElementById('posto-detail-view').style.display = 'none';
-        }
 
         function renderClienteTab() {
             const map = {};
@@ -1049,9 +1086,13 @@
                 <tr>
                     <td><strong>${c.nome}</strong></td>
                     <td><strong>${c.total}</strong></td>
-                    <td><button class="btn-back" onclick="openClienteDetail('${escapeQuotes(c.nome)}')">Detalhar</button></td>
+                    <td><button class="btn-back btn-cliente-detail" data-nome="${escapeQuotes(c.nome)}">Detalhar</button></td>
                 </tr>
             `).join('');
+
+            document.querySelectorAll('.btn-cliente-detail').forEach(btn => {
+                btn.addEventListener('click', (e) => openClienteDetail(e.target.getAttribute('data-nome')));
+            });
         }
 
         function openClienteDetail(nome) {
@@ -1071,10 +1112,6 @@
                 </tr>
             `).join('');
         }
-        function closeClienteDetail() {
-            document.getElementById('cliente-summary-view').style.display = 'block';
-            document.getElementById('cliente-detail-view').style.display = 'none';
-        }
 
         function renderModeloTab() {
             const map = {};
@@ -1084,9 +1121,13 @@
                 <tr>
                     <td><strong>${m.nome}</strong></td>
                     <td><strong>${m.total}</strong></td>
-                    <td><button class="btn-back" onclick="openModeloDetail('${escapeQuotes(m.nome)}')">Detalhar</button></td>
+                    <td><button class="btn-back btn-modelo-detail" data-nome="${escapeQuotes(m.nome)}">Detalhar</button></td>
                 </tr>
             `).join('');
+
+            document.querySelectorAll('.btn-modelo-detail').forEach(btn => {
+                btn.addEventListener('click', (e) => openModeloDetail(e.target.getAttribute('data-nome')));
+            });
         }
 
         function openModeloDetail(nome) {
@@ -1106,27 +1147,44 @@
                 </tr>
             `).join('');
         }
-        function closeModeloDetail() {
-            document.getElementById('modelo-summary-view').style.display = 'block';
-            document.getElementById('modelo-detail-view').style.display = 'none';
-        }
 
-        // UTILS
-        function switchTab(tabId, btn) {
-            document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            btn.classList.add('active');
-            document.getElementById(`tab-${tabId}`).classList.add('active');
-        }
+        // EVENT LISTENERS DE NAVEGAÇÃO E BOTOES
+        document.querySelectorAll('.nav-tab').forEach(tabBtn => {
+            tabBtn.addEventListener('click', () => {
+                document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                tabBtn.classList.add('active');
+                document.getElementById(`tab-${tabBtn.dataset.tab}`).classList.add('active');
+            });
+        });
 
-        function toggleTheme() {
+        document.getElementById('filter-periodo').addEventListener('change', applyFilters);
+        document.getElementById('filter-status').addEventListener('change', applyFilters);
+        document.getElementById('filter-search').addEventListener('input', applyFilters);
+
+        document.getElementById('theme-btn').addEventListener('click', () => {
             const html = document.documentElement;
             const newTheme = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
             html.setAttribute('data-theme', newTheme);
             document.getElementById('theme-icon').className = newTheme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
             document.getElementById('theme-text').textContent = newTheme === 'dark' ? 'Modo Claro' : 'Modo Escuro';
             updateCharts();
-        }
+        });
+
+        document.getElementById('btn-back-posto').addEventListener('click', () => {
+            document.getElementById('posto-summary-view').style.display = 'block';
+            document.getElementById('posto-detail-view').style.display = 'none';
+        });
+
+        document.getElementById('btn-back-cliente').addEventListener('click', () => {
+            document.getElementById('cliente-summary-view').style.display = 'block';
+            document.getElementById('cliente-detail-view').style.display = 'none';
+        });
+
+        document.getElementById('btn-back-modelo').addEventListener('click', () => {
+            document.getElementById('modelo-summary-view').style.display = 'block';
+            document.getElementById('modelo-detail-view').style.display = 'none';
+        });
 
         function getStatusBadge(status) {
             return status === 'ENCERRADO' 
@@ -1143,6 +1201,10 @@
         function escapeQuotes(str) {
             return str.replace(/'/g, "\\'").replace(/"/g, '&quot;');
         }
+
+        // INICIALIZAÇÃO
+        setupMapEvents();
+        loadDataFromFirebase();
     </script>
 </body>
 </html>
