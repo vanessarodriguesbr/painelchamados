@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Chart.js para gráficos -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- SheetJS para leitura de arquivos Excel (.xlsx) -->
+    <!-- SheetJS para leitura e exportação de arquivos Excel (.xlsx) -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
     <style>
@@ -288,6 +288,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 1rem;
         }
 
         .table-wrapper {
@@ -335,6 +336,7 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 1.5rem;
+            margin-bottom: 1.5rem;
         }
 
         @media (max-width: 992px) { .map-layout { grid-template-columns: 1fr; } }
@@ -378,10 +380,33 @@
             margin-bottom: 0.5rem;
         }
 
+        .btn-export {
+            background-color: #16a34a;
+            color: #ffffff;
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .btn-export:hover { background-color: #15803d; }
+
         .empty-notice {
             text-align: center;
             padding: 3rem 1rem;
             color: var(--text-muted);
+        }
+
+        .detail-header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
         }
 
         footer {
@@ -528,6 +553,7 @@
             <div class="table-card">
                 <div class="table-header-title">
                     <h4><i class="fa-solid fa-list"></i> Todos os Chamados (<span id="count-geral">0</span>)</h4>
+                    <button class="btn-export" id="btn-export-geral"><i class="fa-solid fa-file-excel"></i> Exportar Excel</button>
                 </div>
                 <div class="table-wrapper">
                     <table>
@@ -543,10 +569,11 @@
                                 <th>Problema</th>
                                 <th>Status</th>
                                 <th>Encerramento</th>
+                                <th>Solução</th>
                             </tr>
                         </thead>
                         <tbody id="tbody-geral">
-                            <tr><td colspan="10" class="empty-notice"><i class="fa-solid fa-spinner fa-spin fa-2x"></i><br><br>Carregando dados do Firebase...</td></tr>
+                            <tr><td colspan="11" class="empty-notice"><i class="fa-solid fa-spinner fa-spin fa-2x"></i><br><br>Carregando dados do Firebase...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -557,7 +584,7 @@
         <section id="tab-regiao" class="tab-content">
             <div class="map-layout">
                 <div class="map-card">
-                    <h4 style="margin-bottom: 1rem; width: 100%;"><i class="fa-solid fa-map-marked-alt"></i> Clique em um Estado (UF)</h4>
+                    <h4 style="margin-bottom: 1rem; width: 100%;"><i class="fa-solid fa-map-marked-alt"></i> Mapa Interativo das UFs</h4>
                     <div class="svg-container">
                         <svg viewBox="0 0 600 600" id="brazil-map">
                             <g class="uf-group" data-uf="RR"><path class="uf-path" d="M 220,40 L 260,35 L 270,75 L 230,95 L 210,70 Z" /><text x="238" y="62" class="uf-text">RR</text></g>
@@ -591,27 +618,42 @@
                     </div>
                 </div>
 
-                <div class="table-card">
-                    <div class="table-header-title">
+                <!-- Gráfico Comparativo de Estados -->
+                <div class="chart-card">
+                    <h4><i class="fa-solid fa-chart-column"></i> Estados com Maior Quantidade de Chamados</h4>
+                    <div class="chart-container"><canvas id="chart-estados"></canvas></div>
+                </div>
+            </div>
+
+            <!-- Tabela Detalhada do Estado Selecionado -->
+            <div class="table-card">
+                <div class="table-header-title">
+                    <div>
                         <h4 id="title-regiao-detail"><i class="fa-solid fa-location-dot"></i> Selecione um Estado no Mapa</h4>
-                        <span class="badge badge-closed" id="badge-uf-count">0 chamados</span>
+                        <span class="badge badge-closed" id="badge-uf-count" style="margin-top: 0.25rem;">0 chamados</span>
                     </div>
-                    <div class="table-wrapper">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Chamado</th>
-                                    <th>Posto</th>
-                                    <th>Cliente</th>
-                                    <th>Modelo</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tbody-regiao">
-                                <tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Clique em um estado no mapa.</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
+                    <button class="btn-export" id="btn-export-regiao"><i class="fa-solid fa-file-excel"></i> Exportar Excel</button>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Chamado</th>
+                                <th>Abertura</th>
+                                <th>Posto</th>
+                                <th>Cliente</th>
+                                <th>Modelo</th>
+                                <th>Serial</th>
+                                <th>Problema</th>
+                                <th>Status</th>
+                                <th>Encerramento</th>
+                                <th>Solução</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-regiao">
+                            <tr><td colspan="10" style="text-align: center; color: var(--text-muted);">Clique em um estado no mapa.</td></tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </section>
@@ -639,7 +681,10 @@
                 </div>
             </div>
             <div id="posto-detail-view" style="display: none;">
-                <button class="btn-back" id="btn-back-posto"><i class="fa-solid fa-arrow-left"></i> Voltar</button>
+                <div class="detail-header-actions">
+                    <button class="btn-back" id="btn-back-posto"><i class="fa-solid fa-arrow-left"></i> Voltar para Lista de Postos</button>
+                    <button class="btn-export" id="btn-export-posto"><i class="fa-solid fa-file-excel"></i> Exportar Excel</button>
+                </div>
                 <div class="table-card">
                     <div class="table-header-title"><h4 id="posto-detail-title">Detalhes do Posto</h4></div>
                     <div class="table-wrapper">
@@ -653,6 +698,8 @@
                                     <th>Serial</th>
                                     <th>Problema</th>
                                     <th>Status</th>
+                                    <th>Encerramento</th>
+                                    <th>Solução</th>
                                 </tr>
                             </thead>
                             <tbody id="tbody-posto-detail"></tbody>
@@ -684,7 +731,10 @@
                 </div>
             </div>
             <div id="cliente-detail-view" style="display: none;">
-                <button class="btn-back" id="btn-back-cliente"><i class="fa-solid fa-arrow-left"></i> Voltar</button>
+                <div class="detail-header-actions">
+                    <button class="btn-back" id="btn-back-cliente"><i class="fa-solid fa-arrow-left"></i> Voltar para Lista de Clientes</button>
+                    <button class="btn-export" id="btn-export-cliente"><i class="fa-solid fa-file-excel"></i> Exportar Excel</button>
+                </div>
                 <div class="table-card">
                     <div class="table-header-title"><h4 id="cliente-detail-title">Detalhes do Cliente</h4></div>
                     <div class="table-wrapper">
@@ -696,8 +746,11 @@
                                     <th>Posto</th>
                                     <th>UF</th>
                                     <th>Modelo</th>
+                                    <th>Serial</th>
                                     <th>Problema</th>
                                     <th>Status</th>
+                                    <th>Encerramento</th>
+                                    <th>Solução</th>
                                 </tr>
                             </thead>
                             <tbody id="tbody-cliente-detail"></tbody>
@@ -729,7 +782,10 @@
                 </div>
             </div>
             <div id="modelo-detail-view" style="display: none;">
-                <button class="btn-back" id="btn-back-modelo"><i class="fa-solid fa-arrow-left"></i> Voltar</button>
+                <div class="detail-header-actions">
+                    <button class="btn-back" id="btn-back-modelo"><i class="fa-solid fa-arrow-left"></i> Voltar para Lista de Modelos</button>
+                    <button class="btn-export" id="btn-export-modelo"><i class="fa-solid fa-file-excel"></i> Exportar Excel</button>
+                </div>
                 <div class="table-card">
                     <div class="table-header-title"><h4 id="modelo-detail-title">Detalhes do Modelo</h4></div>
                     <div class="table-wrapper">
@@ -741,8 +797,11 @@
                                     <th>Posto</th>
                                     <th>Cliente</th>
                                     <th>Serial</th>
+                                    <th>UF</th>
                                     <th>Problema</th>
                                     <th>Status</th>
+                                    <th>Encerramento</th>
+                                    <th>Solução</th>
                                 </tr>
                             </thead>
                             <tbody id="tbody-modelo-detail"></tbody>
@@ -763,7 +822,7 @@
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
         import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Configuração do seu projeto Firebase
+        // Configuração do projeto Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyC3So20Zjzhy7UlVY5JFfRl5l00NlzMxV8",
             authDomain: "painel-chamados-fa2d8.firebaseapp.com",
@@ -774,19 +833,19 @@
             measurementId: "G-RJRG3KX85K"
         };
 
-        // Inicializa o Firebase
         const app = initializeApp(firebaseConfig);
         const analytics = getAnalytics(app);
         const db = getFirestore(app);
 
         let ALL_DATA = [];
         let FILTERED_DATA = [];
-        let chartMeses, chartStatus, chartTopPostos, chartModelos;
+        let chartMeses, chartStatus, chartTopPostos, chartModelos, chartEstados;
         let selectedUF = null;
+        let currentActiveDetail = { type: null, value: null };
 
         const UF_NORMALIZER = { 'BH': 'MG', 'PV': 'RO' };
 
-        // Carrega os dados salvos no Firebase assim que a página é aberta
+        // CARREGAR FIREBASE
         async function loadDataFromFirebase() {
             try {
                 const docRef = doc(db, "dashboards", "chamados");
@@ -798,16 +857,15 @@
                     applyFilters();
                 } else {
                     document.getElementById('tbody-geral').innerHTML = 
-                        '<tr><td colspan="10" class="empty-notice"><i class="fa-solid fa-file-excel fa-2x"></i><br><br>Nenhum dado encontrado no Firebase.<br>Clique no botão <strong>"Carregar Planilha"</strong> acima para enviar os dados.</td></tr>';
+                        '<tr><td colspan="11" class="empty-notice"><i class="fa-solid fa-file-excel fa-2x"></i><br><br>Nenhum dado encontrado no Firebase.<br>Clique no botão <strong>"Carregar Planilha"</strong> acima para carregar os dados.</td></tr>';
                 }
             } catch (err) {
                 console.error("Erro ao carregar dados do Firebase:", err);
                 document.getElementById('tbody-geral').innerHTML = 
-                    '<tr><td colspan="10" class="empty-notice"><i class="fa-solid fa-file-excel fa-2x"></i><br><br>Clique no botão <strong>"Carregar Planilha"</strong> no menu superior para enviar e carregar os dados.</td></tr>';
+                    '<tr><td colspan="11" class="empty-notice"><i class="fa-solid fa-file-excel fa-2x"></i><br><br>Clique no botão <strong>"Carregar Planilha"</strong> no menu superior para carregar os dados.</td></tr>';
             }
         }
 
-        // Salva os dados processados no Firebase
         async function saveDataToFirebase(records) {
             try {
                 await setDoc(doc(db, "dashboards", "chamados"), {
@@ -817,11 +875,11 @@
                 alert("Dados salvos com sucesso no Firebase!");
             } catch (err) {
                 console.error("Erro ao salvar no Firebase:", err);
-                alert("Os dados foram carregados localmente, mas não foi possível salvar no Firebase. Verifique as regras do Firestore.");
+                alert("Os dados foram carregados localmente. Verifique as regras do Firestore para salvar na nuvem.");
             }
         }
 
-        // LEITURA E UPLOAD DE EXCEL
+        // UPLOAD EXCEL
         document.getElementById('excel-upload').addEventListener('change', function(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -937,7 +995,7 @@
 
             const tbody = document.getElementById('tbody-geral');
             if (total === 0) {
-                tbody.innerHTML = '<tr><td colspan="10" class="empty-notice">Nenhum registro encontrado.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="11" class="empty-notice">Nenhum registro encontrado.</td></tr>';
                 return;
             }
 
@@ -953,6 +1011,7 @@
                     <td>${d.problema}</td>
                     <td>${getStatusBadge(d.status)}</td>
                     <td>${formatDate(d.dataEncerramento)}</td>
+                    <td>${d.solucao || '-'}</td>
                 </tr>
             `).join('');
 
@@ -962,15 +1021,17 @@
         function updateCharts() {
             if (!FILTERED_DATA) return;
 
+            // #5: Chamados por Período em BARRAS HORIZONTAIS
             const mesesCount = {};
             FILTERED_DATA.forEach(d => { mesesCount[d.mes] = (mesesCount[d.mes] || 0) + 1; });
             if (chartMeses) chartMeses.destroy();
             chartMeses = new Chart(document.getElementById('chart-meses'), {
                 type: 'bar',
                 data: { labels: Object.keys(mesesCount), datasets: [{ label: 'Chamados', data: Object.values(mesesCount), backgroundColor: '#2563eb' }] },
-                options: { responsive: true, maintainAspectRatio: false }
+                options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false }
             });
 
+            // Status dos Chamados
             const statusCount = {};
             FILTERED_DATA.forEach(d => { statusCount[d.status] = (statusCount[d.status] || 0) + 1; });
             if (chartStatus) chartStatus.destroy();
@@ -980,6 +1041,7 @@
                 options: { responsive: true, maintainAspectRatio: false }
             });
 
+            // Top Postos (Barras Horizontais)
             const postosCount = {};
             FILTERED_DATA.forEach(d => { postosCount[d.posto] = (postosCount[d.posto] || 0) + 1; });
             const topPostos = Object.entries(postosCount).sort((a,b) => b[1] - a[1]).slice(0, 5);
@@ -990,17 +1052,30 @@
                 options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false }
             });
 
+            // #4: Chamados por Modelo em BARRAS HORIZONTAIS
             const modelosCount = {};
             FILTERED_DATA.forEach(d => { modelosCount[d.modelo] = (modelosCount[d.modelo] || 0) + 1; });
+            const modelosSorted = Object.entries(modelosCount).sort((a,b) => b[1] - a[1]);
             if (chartModelos) chartModelos.destroy();
             chartModelos = new Chart(document.getElementById('chart-modelos'), {
-                type: 'pie',
-                data: { labels: Object.keys(modelosCount), datasets: [{ data: Object.values(modelosCount), backgroundColor: ['#2563eb', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'] }] },
+                type: 'bar',
+                data: { labels: modelosSorted.map(m => m[0]), datasets: [{ label: 'Chamados', data: modelosSorted.map(m => m[1]), backgroundColor: '#10b981' }] },
+                options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false }
+            });
+
+            // #3: Gráfico Comparativo de Estados (UFs) na Aba de Região
+            const estadosCount = {};
+            FILTERED_DATA.forEach(d => { if (d.uf) estadosCount[d.uf] = (estadosCount[d.uf] || 0) + 1; });
+            const estadosSorted = Object.entries(estadosCount).sort((a,b) => b[1] - a[1]).slice(0, 8);
+            if (chartEstados) chartEstados.destroy();
+            chartEstados = new Chart(document.getElementById('chart-estados'), {
+                type: 'bar',
+                data: { labels: estadosSorted.map(e => e[0]), datasets: [{ label: 'Chamados', data: estadosSorted.map(e => e[1]), backgroundColor: '#f59e0b' }] },
                 options: { responsive: true, maintainAspectRatio: false }
             });
         }
 
-        // MAPA
+        // MAPA E REGIÃO
         function setupMapEvents() {
             const tooltip = document.getElementById('map-tooltip');
             document.querySelectorAll('.uf-group').forEach(group => {
@@ -1030,15 +1105,21 @@
             document.getElementById('title-regiao-detail').innerHTML = `<i class="fa-solid fa-location-dot"></i> Estado: ${uf}`;
             document.getElementById('badge-uf-count').textContent = `${items.length} chamados`;
             const tbody = document.getElementById('tbody-regiao');
+            
             tbody.innerHTML = items.length ? items.map(d => `
                 <tr>
                     <td><strong>#${d.chamado}</strong></td>
+                    <td>${formatDate(d.dataAbertura)}</td>
                     <td>${d.posto}</td>
                     <td>${d.cliente}</td>
                     <td>${d.modelo}</td>
+                    <td>${d.serial}</td>
+                    <td>${d.problema}</td>
                     <td>${getStatusBadge(d.status)}</td>
+                    <td>${formatDate(d.dataEncerramento)}</td>
+                    <td>${d.solucao || '-'}</td>
                 </tr>
-            `).join('') : '<tr><td colspan="5" style="text-align: center;">Nenhum chamado neste estado.</td></tr>';
+            `).join('') : '<tr><td colspan="10" style="text-align: center;">Nenhum chamado neste estado.</td></tr>';
         }
 
         // ABAS POSTO, CLIENTE, MODELO
@@ -1061,6 +1142,7 @@
         }
 
         function openPostoDetail(nome) {
+            currentActiveDetail = { type: 'posto', value: nome };
             document.getElementById('posto-summary-view').style.display = 'none';
             document.getElementById('posto-detail-view').style.display = 'block';
             document.getElementById('posto-detail-title').textContent = `Posto: ${nome}`;
@@ -1074,6 +1156,8 @@
                     <td>${d.serial}</td>
                     <td>${d.problema}</td>
                     <td>${getStatusBadge(d.status)}</td>
+                    <td>${formatDate(d.dataEncerramento)}</td>
+                    <td>${d.solucao || '-'}</td>
                 </tr>
             `).join('');
         }
@@ -1096,6 +1180,7 @@
         }
 
         function openClienteDetail(nome) {
+            currentActiveDetail = { type: 'cliente', value: nome };
             document.getElementById('cliente-summary-view').style.display = 'none';
             document.getElementById('cliente-detail-view').style.display = 'block';
             document.getElementById('cliente-detail-title').textContent = `Cliente: ${nome}`;
@@ -1107,8 +1192,11 @@
                     <td>${d.posto}</td>
                     <td>${d.uf}</td>
                     <td>${d.modelo}</td>
+                    <td>${d.serial}</td>
                     <td>${d.problema}</td>
                     <td>${getStatusBadge(d.status)}</td>
+                    <td>${formatDate(d.dataEncerramento)}</td>
+                    <td>${d.solucao || '-'}</td>
                 </tr>
             `).join('');
         }
@@ -1131,6 +1219,7 @@
         }
 
         function openModeloDetail(nome) {
+            currentActiveDetail = { type: 'modelo', value: nome };
             document.getElementById('modelo-summary-view').style.display = 'none';
             document.getElementById('modelo-detail-view').style.display = 'block';
             document.getElementById('modelo-detail-title').textContent = `Modelo: ${nome}`;
@@ -1142,13 +1231,68 @@
                     <td>${d.posto}</td>
                     <td>${d.cliente}</td>
                     <td>${d.serial}</td>
+                    <td>${d.uf}</td>
                     <td>${d.problema}</td>
                     <td>${getStatusBadge(d.status)}</td>
+                    <td>${formatDate(d.dataEncerramento)}</td>
+                    <td>${d.solucao || '-'}</td>
                 </tr>
             `).join('');
         }
 
-        // EVENT LISTENERS DE NAVEGAÇÃO E BOTOES
+        // #1: EXPORTAR PARA EXCEL (SheetJS)
+        function exportToExcel(records, filename) {
+            if (!records || records.length === 0) {
+                alert("Não há dados para exportar.");
+                return;
+            }
+
+            const exportData = records.map(d => ({
+                "Mês": d.mes,
+                "Data de Abertura": formatDate(d.dataAbertura),
+                "Chamado": d.chamado,
+                "Serial": d.serial,
+                "Modelo": d.modelo,
+                "Posto": d.posto,
+                "Cliente": d.cliente,
+                "SLA": d.sla,
+                "UF": d.uf,
+                "Problema": d.problema,
+                "Data de Encerramento": formatDate(d.dataEncerramento),
+                "Status": d.status,
+                "Solução": d.solucao
+            }));
+
+            const worksheet = XLSX.utils.json_to_sheet(exportData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Chamados");
+            XLSX.writeFile(workbook, `${filename}.xlsx`);
+        }
+
+        // BINDING DE EVENTOS DE EXPORTAÇÃO
+        document.getElementById('btn-export-geral').addEventListener('click', () => exportToExcel(FILTERED_DATA, "Relatorio_Geral_Chamados"));
+        document.getElementById('btn-export-regiao').addEventListener('click', () => {
+            if (!selectedUF) return alert("Selecione um estado no mapa primeiro.");
+            const items = FILTERED_DATA.filter(d => d.uf === selectedUF);
+            exportToExcel(items, `Relatorio_Regiao_${selectedUF}`);
+        });
+        document.getElementById('btn-export-posto').addEventListener('click', () => {
+            if (!currentActiveDetail.value) return;
+            const items = FILTERED_DATA.filter(d => d.posto === currentActiveDetail.value);
+            exportToExcel(items, `Relatorio_Posto_${currentActiveDetail.value.replace(/\s+/g, '_')}`);
+        });
+        document.getElementById('btn-export-cliente').addEventListener('click', () => {
+            if (!currentActiveDetail.value) return;
+            const items = FILTERED_DATA.filter(d => d.cliente === currentActiveDetail.value);
+            exportToExcel(items, `Relatorio_Cliente_${currentActiveDetail.value.replace(/\s+/g, '_')}`);
+        });
+        document.getElementById('btn-export-modelo').addEventListener('click', () => {
+            if (!currentActiveDetail.value) return;
+            const items = FILTERED_DATA.filter(d => d.modelo === currentActiveDetail.value);
+            exportToExcel(items, `Relatorio_Modelo_${currentActiveDetail.value.replace(/\s+/g, '_')}`);
+        });
+
+        // EVENT LISTENERS DE NAVEGAÇÃO
         document.querySelectorAll('.nav-tab').forEach(tabBtn => {
             tabBtn.addEventListener('click', () => {
                 document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
