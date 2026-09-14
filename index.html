@@ -131,6 +131,14 @@
 
         .filter-group input { width: 180px; }
 
+        .period-range-container {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
         .btn-upload {
             background-color: #16a34a;
             color: #ffffff !important;
@@ -253,7 +261,7 @@
         /* CHARTS */
         .charts-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 1.5rem;
             margin-bottom: 1.5rem;
         }
@@ -438,12 +446,18 @@
                 </label>
                 <input type="file" id="excel-upload" accept=".xlsx, .xls" style="display: none;">
 
-                <!-- Filtro por Período -->
+                <!-- #2: Filtro por Período Selecionado (De X até Y) -->
                 <div class="filter-group">
                     <i class="fa-regular fa-calendar-days"></i>
-                    <select id="filter-periodo">
-                        <option value="TODOS">Todos os Meses</option>
-                    </select>
+                    <div class="period-range-container">
+                        <select id="filter-periodo-inicio">
+                            <option value="TODOS">Início</option>
+                        </select>
+                        <span>até</span>
+                        <select id="filter-periodo-fim">
+                            <option value="TODOS">Fim</option>
+                        </select>
+                    </div>
                 </div>
 
                 <!-- Filtro por Status -->
@@ -531,14 +545,11 @@
                 </div>
             </div>
 
+            <!-- #1: Gráficos da Visão Geral sem o gráfico de rosca de abertos/encerrados -->
             <div class="charts-grid">
                 <div class="chart-card">
                     <h4><i class="fa-solid fa-chart-line"></i> Chamados por Período</h4>
                     <div class="chart-container"><canvas id="chart-meses"></canvas></div>
-                </div>
-                <div class="chart-card">
-                    <h4><i class="fa-solid fa-chart-pie"></i> Status dos Chamados</h4>
-                    <div class="chart-container"><canvas id="chart-status"></canvas></div>
                 </div>
                 <div class="chart-card">
                     <h4><i class="fa-solid fa-ranking-star"></i> Top 5 Postos</h4>
@@ -618,14 +629,12 @@
                     </div>
                 </div>
 
-                <!-- Gráfico Comparativo de Estados -->
                 <div class="chart-card">
                     <h4><i class="fa-solid fa-chart-column"></i> Estados com Maior Quantidade de Chamados</h4>
                     <div class="chart-container"><canvas id="chart-estados"></canvas></div>
                 </div>
             </div>
 
-            <!-- Tabela Detalhada do Estado Selecionado -->
             <div class="table-card">
                 <div class="table-header-title">
                     <div>
@@ -822,7 +831,6 @@
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
         import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Configuração do projeto Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyC3So20Zjzhy7UlVY5JFfRl5l00NlzMxV8",
             authDomain: "painel-chamados-fa2d8.firebaseapp.com",
@@ -839,13 +847,12 @@
 
         let ALL_DATA = [];
         let FILTERED_DATA = [];
-        let chartMeses, chartStatus, chartTopPostos, chartModelos, chartEstados;
+        let chartMeses, chartTopPostos, chartModelos, chartEstados;
         let selectedUF = null;
         let currentActiveDetail = { type: null, value: null };
 
         const UF_NORMALIZER = { 'BH': 'MG', 'PV': 'RO' };
 
-        // CARREGAR FIREBASE
         async function loadDataFromFirebase() {
             try {
                 const docRef = doc(db, "dashboards", "chamados");
@@ -943,11 +950,17 @@
             return String(val).split(' ')[0];
         }
 
+        // #2: POPULAR FILTROS COM INTERVALO DE PERÍODO (INÍCIO E FIM)
         function populateFilterOptions() {
             const meses = [...new Set(ALL_DATA.map(d => d.mes))].filter(Boolean).sort();
-            const filterPeriodo = document.getElementById('filter-periodo');
-            filterPeriodo.innerHTML = '<option value="TODOS">Todos os Meses</option>' + 
-                meses.map(m => `<option value="${m}">${m}</option>`).join('');
+            
+            const filterPeriodoInicio = document.getElementById('filter-periodo-inicio');
+            const filterPeriodoFim = document.getElementById('filter-periodo-fim');
+
+            const optionsHtml = meses.map(m => `<option value="${m}">${m}</option>`).join('');
+
+            filterPeriodoInicio.innerHTML = '<option value="TODOS">Início</option>' + optionsHtml;
+            filterPeriodoFim.innerHTML = '<option value="TODOS">Fim</option>' + optionsHtml;
 
             const statusList = [...new Set(ALL_DATA.map(d => d.status))].filter(Boolean).sort();
             const filterStatus = document.getElementById('filter-status');
@@ -955,13 +968,30 @@
                 statusList.map(s => `<option value="${s}">${s}</option>`).join('');
         }
 
+        // #2: APLICAR FILTRO POR PERÍODO SELECIONADO (SEJA ÚNICO OU INTERVALO)
         function applyFilters() {
-            const periodo = document.getElementById('filter-periodo').value;
+            const pInicio = document.getElementById('filter-periodo-inicio').value;
+            const pFim = document.getElementById('filter-periodo-fim').value;
             const status = document.getElementById('filter-status').value;
             const search = document.getElementById('filter-search').value.toLowerCase().trim();
 
+            const todosMeses = [...new Set(ALL_DATA.map(d => d.mes))].filter(Boolean).sort();
+
             FILTERED_DATA = ALL_DATA.filter(item => {
-                const matchPeriodo = (periodo === 'TODOS') || (item.mes === periodo);
+                // Filtro por Período / Intervalo
+                let matchPeriodo = true;
+
+                if (pInicio !== 'TODOS' || pFim !== 'TODOS') {
+                    const idxItem = todosMeses.indexOf(item.mes);
+                    const idxInicio = pInicio !== 'TODOS' ? todosMeses.indexOf(pInicio) : 0;
+                    const idxFim = pFim !== 'TODOS' ? todosMeses.indexOf(pFim) : todosMeses.length - 1;
+
+                    const start = Math.min(idxInicio, idxFim);
+                    const end = Math.max(idxInicio, idxFim);
+
+                    matchPeriodo = idxItem >= start && idxItem <= end;
+                }
+
                 const matchStatus = (status === 'TODOS') || (item.status === status);
                 const matchSearch = !search || 
                     item.posto.toLowerCase().includes(search) ||
@@ -1021,7 +1051,7 @@
         function updateCharts() {
             if (!FILTERED_DATA) return;
 
-            // #5: Chamados por Período em BARRAS HORIZONTAIS
+            // Chamados por Período em Barras Horizontais
             const mesesCount = {};
             FILTERED_DATA.forEach(d => { mesesCount[d.mes] = (mesesCount[d.mes] || 0) + 1; });
             if (chartMeses) chartMeses.destroy();
@@ -1029,16 +1059,6 @@
                 type: 'bar',
                 data: { labels: Object.keys(mesesCount), datasets: [{ label: 'Chamados', data: Object.values(mesesCount), backgroundColor: '#2563eb' }] },
                 options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false }
-            });
-
-            // Status dos Chamados
-            const statusCount = {};
-            FILTERED_DATA.forEach(d => { statusCount[d.status] = (statusCount[d.status] || 0) + 1; });
-            if (chartStatus) chartStatus.destroy();
-            chartStatus = new Chart(document.getElementById('chart-status'), {
-                type: 'doughnut',
-                data: { labels: Object.keys(statusCount), datasets: [{ data: Object.values(statusCount), backgroundColor: ['#16a34a', '#dc2626', '#eab308'] }] },
-                options: { responsive: true, maintainAspectRatio: false }
             });
 
             // Top Postos (Barras Horizontais)
@@ -1052,7 +1072,7 @@
                 options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false }
             });
 
-            // #4: Chamados por Modelo em BARRAS HORIZONTAIS
+            // Chamados por Modelo em Barras Horizontais
             const modelosCount = {};
             FILTERED_DATA.forEach(d => { modelosCount[d.modelo] = (modelosCount[d.modelo] || 0) + 1; });
             const modelosSorted = Object.entries(modelosCount).sort((a,b) => b[1] - a[1]);
@@ -1063,7 +1083,7 @@
                 options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false }
             });
 
-            // #3: Gráfico Comparativo de Estados (UFs) na Aba de Região
+            // Gráfico Comparativo de Estados (UFs) na Aba de Região
             const estadosCount = {};
             FILTERED_DATA.forEach(d => { if (d.uf) estadosCount[d.uf] = (estadosCount[d.uf] || 0) + 1; });
             const estadosSorted = Object.entries(estadosCount).sort((a,b) => b[1] - a[1]).slice(0, 8);
@@ -1240,7 +1260,7 @@
             `).join('');
         }
 
-        // #1: EXPORTAR PARA EXCEL (SheetJS)
+        // EXPORTAR PARA EXCEL (SheetJS)
         function exportToExcel(records, filename) {
             if (!records || records.length === 0) {
                 alert("Não há dados para exportar.");
@@ -1302,7 +1322,8 @@
             });
         });
 
-        document.getElementById('filter-periodo').addEventListener('change', applyFilters);
+        document.getElementById('filter-periodo-inicio').addEventListener('change', applyFilters);
+        document.getElementById('filter-periodo-fim').addEventListener('change', applyFilters);
         document.getElementById('filter-status').addEventListener('change', applyFilters);
         document.getElementById('filter-search').addEventListener('input', applyFilters);
 
