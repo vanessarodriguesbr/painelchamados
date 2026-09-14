@@ -446,7 +446,7 @@
                 </label>
                 <input type="file" id="excel-upload" accept=".xlsx, .xls" style="display: none;">
 
-                <!-- #2: Filtro por Período Selecionado (De X até Y) -->
+                <!-- Filtro por Período Selecionado -->
                 <div class="filter-group">
                     <i class="fa-regular fa-calendar-days"></i>
                     <div class="period-range-container">
@@ -545,7 +545,6 @@
                 </div>
             </div>
 
-            <!-- #1: Gráficos da Visão Geral sem o gráfico de rosca de abertos/encerrados -->
             <div class="charts-grid">
                 <div class="chart-card">
                     <h4><i class="fa-solid fa-chart-line"></i> Chamados por Período</h4>
@@ -570,21 +569,24 @@
                     <table>
                         <thead>
                             <tr>
-                                <th>Chamado</th>
+                                <th>Mês</th>
                                 <th>Abertura</th>
+                                <th>Chamado</th>
+                                <th>OS</th>
+                                <th>Serial</th>
+                                <th>Modelo</th>
                                 <th>Posto</th>
                                 <th>Cliente</th>
-                                <th>Modelo</th>
-                                <th>Serial</th>
+                                <th>SLA</th>
                                 <th>UF</th>
-                                <th>Problema</th>
-                                <th>Status</th>
+                                <th>Problema Real</th>
                                 <th>Encerramento</th>
+                                <th>Status</th>
                                 <th>Solução</th>
                             </tr>
                         </thead>
                         <tbody id="tbody-geral">
-                            <tr><td colspan="11" class="empty-notice"><i class="fa-solid fa-spinner fa-spin fa-2x"></i><br><br>Carregando dados do Firebase...</td></tr>
+                            <tr><td colspan="14" class="empty-notice"><i class="fa-solid fa-spinner fa-spin fa-2x"></i><br><br>Carregando dados do Firebase...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -647,20 +649,24 @@
                     <table>
                         <thead>
                             <tr>
-                                <th>Chamado</th>
+                                <th>Mês</th>
                                 <th>Abertura</th>
+                                <th>Chamado</th>
+                                <th>OS</th>
+                                <th>Serial</th>
+                                <th>Modelo</th>
                                 <th>Posto</th>
                                 <th>Cliente</th>
-                                <th>Modelo</th>
-                                <th>Serial</th>
-                                <th>Problema</th>
-                                <th>Status</th>
+                                <th>SLA</th>
+                                <th>UF</th>
+                                <th>Problema Real</th>
                                 <th>Encerramento</th>
+                                <th>Status</th>
                                 <th>Solução</th>
                             </tr>
                         </thead>
                         <tbody id="tbody-regiao">
-                            <tr><td colspan="10" style="text-align: center; color: var(--text-muted);">Clique em um estado no mapa.</td></tr>
+                            <tr><td colspan="14" style="text-align: center; color: var(--text-muted);">Clique em um estado no mapa.</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -700,14 +706,19 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Chamado</th>
+                                    <th>Mês</th>
                                     <th>Abertura</th>
-                                    <th>Cliente</th>
-                                    <th>Modelo</th>
+                                    <th>Chamado</th>
+                                    <th>OS</th>
                                     <th>Serial</th>
-                                    <th>Problema</th>
-                                    <th>Status</th>
+                                    <th>Modelo</th>
+                                    <th>Posto</th>
+                                    <th>Cliente</th>
+                                    <th>SLA</th>
+                                    <th>UF</th>
+                                    <th>Problema Real</th>
                                     <th>Encerramento</th>
+                                    <th>Status</th>
                                     <th>Solução</th>
                                 </tr>
                             </thead>
@@ -750,15 +761,19 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Chamado</th>
+                                    <th>Mês</th>
                                     <th>Abertura</th>
-                                    <th>Posto</th>
-                                    <th>UF</th>
-                                    <th>Modelo</th>
+                                    <th>Chamado</th>
+                                    <th>OS</th>
                                     <th>Serial</th>
-                                    <th>Problema</th>
-                                    <th>Status</th>
+                                    <th>Modelo</th>
+                                    <th>Posto</th>
+                                    <th>Cliente</th>
+                                    <th>SLA</th>
+                                    <th>UF</th>
+                                    <th>Problema Real</th>
                                     <th>Encerramento</th>
+                                    <th>Status</th>
                                     <th>Solução</th>
                                 </tr>
                             </thead>
@@ -801,15 +816,19 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Chamado</th>
+                                    <th>Mês</th>
                                     <th>Abertura</th>
+                                    <th>Chamado</th>
+                                    <th>OS</th>
+                                    <th>Serial</th>
+                                    <th>Modelo</th>
                                     <th>Posto</th>
                                     <th>Cliente</th>
-                                    <th>Serial</th>
+                                    <th>SLA</th>
                                     <th>UF</th>
-                                    <th>Problema</th>
-                                    <th>Status</th>
+                                    <th>Problema Real</th>
                                     <th>Encerramento</th>
+                                    <th>Status</th>
                                     <th>Solução</th>
                                 </tr>
                             </thead>
@@ -864,12 +883,12 @@
                     applyFilters();
                 } else {
                     document.getElementById('tbody-geral').innerHTML = 
-                        '<tr><td colspan="11" class="empty-notice"><i class="fa-solid fa-file-excel fa-2x"></i><br><br>Nenhum dado encontrado no Firebase.<br>Clique no botão <strong>"Carregar Planilha"</strong> acima para carregar os dados.</td></tr>';
+                        '<tr><td colspan="14" class="empty-notice"><i class="fa-solid fa-file-excel fa-2x"></i><br><br>Nenhum dado encontrado no Firebase.<br>Clique no botão <strong>"Carregar Planilha"</strong> acima para carregar os dados.</td></tr>';
                 }
             } catch (err) {
                 console.error("Erro ao carregar dados do Firebase:", err);
                 document.getElementById('tbody-geral').innerHTML = 
-                    '<tr><td colspan="11" class="empty-notice"><i class="fa-solid fa-file-excel fa-2x"></i><br><br>Clique no botão <strong>"Carregar Planilha"</strong> no menu superior para carregar os dados.</td></tr>';
+                    '<tr><td colspan="14" class="empty-notice"><i class="fa-solid fa-file-excel fa-2x"></i><br><br>Clique no botão <strong>"Carregar Planilha"</strong> no menu superior para carregar os dados.</td></tr>';
             }
         }
 
@@ -886,7 +905,7 @@
             }
         }
 
-        // UPLOAD EXCEL
+        // UPLOAD EXCEL (MAPEAMENTO DAS 14 COLUNAS NA NOVA ORDEM)
         document.getElementById('excel-upload').addEventListener('change', function(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -909,23 +928,24 @@
                     }
 
                     ALL_DATA = json.filter(row => row.length > 2 && row[2]).map(row => {
-                        const rawUf = row[8] ? String(row[8]).trim().toUpperCase() : '';
+                        const rawUf = row[9] ? String(row[9]).trim().toUpperCase() : '';
                         const ufNorm = UF_NORMALIZER[rawUf] || rawUf;
 
                         return {
                             mes: parseExcelDate(row[0]),
                             dataAbertura: parseExcelDate(row[1]),
                             chamado: String(row[2] || ''),
-                            serial: String(row[3] || ''),
-                            modelo: String(row[4] || ''),
-                            posto: String(row[5] || ''),
-                            cliente: String(row[6] || ''),
-                            sla: String(row[7] || ''),
+                            os: String(row[3] || ''),
+                            serial: String(row[4] || ''),
+                            modelo: String(row[5] || ''),
+                            posto: String(row[6] || ''),
+                            cliente: String(row[7] || ''),
+                            sla: String(row[8] || ''),
                             uf: ufNorm,
-                            problema: String(row[9] || ''),
-                            dataEncerramento: parseExcelDate(row[10]),
-                            status: String(row[11] || 'OUTROS').trim().toUpperCase(),
-                            solucao: String(row[12] || '')
+                            problema: String(row[10] || ''),
+                            dataEncerramento: parseExcelDate(row[11]),
+                            status: String(row[12] || 'OUTROS').trim().toUpperCase(),
+                            solucao: String(row[13] || '')
                         };
                     });
 
@@ -950,7 +970,6 @@
             return String(val).split(' ')[0];
         }
 
-        // #2: POPULAR FILTROS COM INTERVALO DE PERÍODO (INÍCIO E FIM)
         function populateFilterOptions() {
             const meses = [...new Set(ALL_DATA.map(d => d.mes))].filter(Boolean).sort();
             
@@ -968,7 +987,6 @@
                 statusList.map(s => `<option value="${s}">${s}</option>`).join('');
         }
 
-        // #2: APLICAR FILTRO POR PERÍODO SELECIONADO (SEJA ÚNICO OU INTERVALO)
         function applyFilters() {
             const pInicio = document.getElementById('filter-periodo-inicio').value;
             const pFim = document.getElementById('filter-periodo-fim').value;
@@ -978,7 +996,6 @@
             const todosMeses = [...new Set(ALL_DATA.map(d => d.mes))].filter(Boolean).sort();
 
             FILTERED_DATA = ALL_DATA.filter(item => {
-                // Filtro por Período / Intervalo
                 let matchPeriodo = true;
 
                 if (pInicio !== 'TODOS' || pFim !== 'TODOS') {
@@ -998,6 +1015,7 @@
                     item.cliente.toLowerCase().includes(search) ||
                     item.modelo.toLowerCase().includes(search) ||
                     item.chamado.toLowerCase().includes(search) ||
+                    item.os.toLowerCase().includes(search) ||
                     item.uf.toLowerCase().includes(search) ||
                     item.problema.toLowerCase().includes(search);
 
@@ -1025,22 +1043,25 @@
 
             const tbody = document.getElementById('tbody-geral');
             if (total === 0) {
-                tbody.innerHTML = '<tr><td colspan="11" class="empty-notice">Nenhum registro encontrado.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="14" class="empty-notice">Nenhum registro encontrado.</td></tr>';
                 return;
             }
 
             tbody.innerHTML = FILTERED_DATA.map(d => `
                 <tr>
-                    <td><strong>#${d.chamado}</strong></td>
+                    <td>${d.mes}</td>
                     <td>${formatDate(d.dataAbertura)}</td>
+                    <td><strong>#${d.chamado}</strong></td>
+                    <td>${d.os || '-'}</td>
+                    <td>${d.serial}</td>
+                    <td>${d.modelo}</td>
                     <td>${d.posto}</td>
                     <td>${d.cliente}</td>
-                    <td>${d.modelo}</td>
-                    <td>${d.serial}</td>
+                    <td>${d.sla || '-'}</td>
                     <td><span class="badge" style="background: var(--border-color);">${d.uf}</span></td>
                     <td>${d.problema}</td>
-                    <td>${getStatusBadge(d.status)}</td>
                     <td>${formatDate(d.dataEncerramento)}</td>
+                    <td>${getStatusBadge(d.status)}</td>
                     <td>${d.solucao || '-'}</td>
                 </tr>
             `).join('');
@@ -1051,7 +1072,6 @@
         function updateCharts() {
             if (!FILTERED_DATA) return;
 
-            // Chamados por Período em Barras Horizontais
             const mesesCount = {};
             FILTERED_DATA.forEach(d => { mesesCount[d.mes] = (mesesCount[d.mes] || 0) + 1; });
             if (chartMeses) chartMeses.destroy();
@@ -1061,7 +1081,6 @@
                 options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false }
             });
 
-            // Top Postos (Barras Horizontais)
             const postosCount = {};
             FILTERED_DATA.forEach(d => { postosCount[d.posto] = (postosCount[d.posto] || 0) + 1; });
             const topPostos = Object.entries(postosCount).sort((a,b) => b[1] - a[1]).slice(0, 5);
@@ -1072,7 +1091,6 @@
                 options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false }
             });
 
-            // Chamados por Modelo em Barras Horizontais
             const modelosCount = {};
             FILTERED_DATA.forEach(d => { modelosCount[d.modelo] = (modelosCount[d.modelo] || 0) + 1; });
             const modelosSorted = Object.entries(modelosCount).sort((a,b) => b[1] - a[1]);
@@ -1083,7 +1101,6 @@
                 options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false }
             });
 
-            // Gráfico Comparativo de Estados (UFs) na Aba de Região
             const estadosCount = {};
             FILTERED_DATA.forEach(d => { if (d.uf) estadosCount[d.uf] = (estadosCount[d.uf] || 0) + 1; });
             const estadosSorted = Object.entries(estadosCount).sort((a,b) => b[1] - a[1]).slice(0, 8);
@@ -1128,18 +1145,22 @@
             
             tbody.innerHTML = items.length ? items.map(d => `
                 <tr>
-                    <td><strong>#${d.chamado}</strong></td>
+                    <td>${d.mes}</td>
                     <td>${formatDate(d.dataAbertura)}</td>
+                    <td><strong>#${d.chamado}</strong></td>
+                    <td>${d.os || '-'}</td>
+                    <td>${d.serial}</td>
+                    <td>${d.modelo}</td>
                     <td>${d.posto}</td>
                     <td>${d.cliente}</td>
-                    <td>${d.modelo}</td>
-                    <td>${d.serial}</td>
+                    <td>${d.sla || '-'}</td>
+                    <td><span class="badge" style="background: var(--border-color);">${d.uf}</span></td>
                     <td>${d.problema}</td>
-                    <td>${getStatusBadge(d.status)}</td>
                     <td>${formatDate(d.dataEncerramento)}</td>
+                    <td>${getStatusBadge(d.status)}</td>
                     <td>${d.solucao || '-'}</td>
                 </tr>
-            `).join('') : '<tr><td colspan="10" style="text-align: center;">Nenhum chamado neste estado.</td></tr>';
+            `).join('') : '<tr><td colspan="14" style="text-align: center;">Nenhum chamado neste estado.</td></tr>';
         }
 
         // ABAS POSTO, CLIENTE, MODELO
@@ -1169,14 +1190,19 @@
             const items = FILTERED_DATA.filter(d => d.posto === nome);
             document.getElementById('tbody-posto-detail').innerHTML = items.map(d => `
                 <tr>
-                    <td><strong>#${d.chamado}</strong></td>
+                    <td>${d.mes}</td>
                     <td>${formatDate(d.dataAbertura)}</td>
-                    <td>${d.cliente}</td>
-                    <td>${d.modelo}</td>
+                    <td><strong>#${d.chamado}</strong></td>
+                    <td>${d.os || '-'}</td>
                     <td>${d.serial}</td>
+                    <td>${d.modelo}</td>
+                    <td>${d.posto}</td>
+                    <td>${d.cliente}</td>
+                    <td>${d.sla || '-'}</td>
+                    <td><span class="badge" style="background: var(--border-color);">${d.uf}</span></td>
                     <td>${d.problema}</td>
-                    <td>${getStatusBadge(d.status)}</td>
                     <td>${formatDate(d.dataEncerramento)}</td>
+                    <td>${getStatusBadge(d.status)}</td>
                     <td>${d.solucao || '-'}</td>
                 </tr>
             `).join('');
@@ -1207,15 +1233,19 @@
             const items = FILTERED_DATA.filter(d => d.cliente === nome);
             document.getElementById('tbody-cliente-detail').innerHTML = items.map(d => `
                 <tr>
-                    <td><strong>#${d.chamado}</strong></td>
+                    <td>${d.mes}</td>
                     <td>${formatDate(d.dataAbertura)}</td>
-                    <td>${d.posto}</td>
-                    <td>${d.uf}</td>
-                    <td>${d.modelo}</td>
+                    <td><strong>#${d.chamado}</strong></td>
+                    <td>${d.os || '-'}</td>
                     <td>${d.serial}</td>
+                    <td>${d.modelo}</td>
+                    <td>${d.posto}</td>
+                    <td>${d.cliente}</td>
+                    <td>${d.sla || '-'}</td>
+                    <td><span class="badge" style="background: var(--border-color);">${d.uf}</span></td>
                     <td>${d.problema}</td>
-                    <td>${getStatusBadge(d.status)}</td>
                     <td>${formatDate(d.dataEncerramento)}</td>
+                    <td>${getStatusBadge(d.status)}</td>
                     <td>${d.solucao || '-'}</td>
                 </tr>
             `).join('');
@@ -1246,21 +1276,25 @@
             const items = FILTERED_DATA.filter(d => d.modelo === nome);
             document.getElementById('tbody-modelo-detail').innerHTML = items.map(d => `
                 <tr>
-                    <td><strong>#${d.chamado}</strong></td>
+                    <td>${d.mes}</td>
                     <td>${formatDate(d.dataAbertura)}</td>
+                    <td><strong>#${d.chamado}</strong></td>
+                    <td>${d.os || '-'}</td>
+                    <td>${d.serial}</td>
+                    <td>${d.modelo}</td>
                     <td>${d.posto}</td>
                     <td>${d.cliente}</td>
-                    <td>${d.serial}</td>
-                    <td>${d.uf}</td>
+                    <td>${d.sla || '-'}</td>
+                    <td><span class="badge" style="background: var(--border-color);">${d.uf}</span></td>
                     <td>${d.problema}</td>
-                    <td>${getStatusBadge(d.status)}</td>
                     <td>${formatDate(d.dataEncerramento)}</td>
+                    <td>${getStatusBadge(d.status)}</td>
                     <td>${d.solucao || '-'}</td>
                 </tr>
             `).join('');
         }
 
-        // EXPORTAR PARA EXCEL (SheetJS)
+        // EXPORTAR PARA EXCEL NA NOVA ORDEM DE COLUNAS
         function exportToExcel(records, filename) {
             if (!records || records.length === 0) {
                 alert("Não há dados para exportar.");
@@ -1268,19 +1302,20 @@
             }
 
             const exportData = records.map(d => ({
-                "Mês": d.mes,
-                "Data de Abertura": formatDate(d.dataAbertura),
-                "Chamado": d.chamado,
-                "Serial": d.serial,
-                "Modelo": d.modelo,
-                "Posto": d.posto,
-                "Cliente": d.cliente,
+                "MÊS": d.mes,
+                "DATA DE ABERTURA": formatDate(d.dataAbertura),
+                "CHAMADO": d.chamado,
+                "OS": d.os,
+                "SERIAL": d.serial,
+                "MODELO": d.modelo,
+                "POSTO": d.posto,
+                "CLIENTE": d.cliente,
                 "SLA": d.sla,
                 "UF": d.uf,
-                "Problema": d.problema,
-                "Data de Encerramento": formatDate(d.dataEncerramento),
-                "Status": d.status,
-                "Solução": d.solucao
+                "PROBLEMA REAL": d.problema,
+                "DATA DE ENCERRAMENTO": formatDate(d.dataEncerramento),
+                "STATUS": d.status,
+                "SOLUÇÃO": d.solucao
             }));
 
             const worksheet = XLSX.utils.json_to_sheet(exportData);
