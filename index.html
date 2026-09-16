@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RELATÓRIO DE CHAMADOS DETALHADOS</title>
+    <title>RELATÓRIO DE CHAMADOS DETALHADOS - BRMOBILITY</title>
     <!-- FontAwesome CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Chart.js para gráficos -->
@@ -19,7 +19,6 @@
             --text-muted: #64748b;
             --border-color: #cbd5e1;
             
-            /* #2: PALETA ROXO ESCURO E ROXO CLARO */
             --primary: #4c1d95;            /* Roxo Escuro */
             --primary-hover: #3b0764;      /* Roxo Escuro Intenso */
             --secondary: #c084fc;          /* Roxo Claro */
@@ -42,32 +41,33 @@
             --badge-closed-text: #6d28d9;
         }
 
+        /* #3: MODO ESCURO SUAVIZADO (POUCO MENOS INTENSO) */
         [data-theme="dark"] {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
+            --bg-color: #1e293b;            /* Fundo ligeiramente mais claro que o anterior */
+            --card-bg: #334155;            /* Cards com contraste suave */
             --text-color: #f8fafc;
-            --text-muted: #94a3b8;
-            --border-color: #334155;
+            --text-muted: #cbd5e1;
+            --border-color: #475569;
             
-            --primary: #8b5cf6;            /* Roxo no modo escuro */
-            --primary-hover: #a78bfa;
-            --secondary: #c084fc;          /* Roxo Claro */
+            --primary: #a78bfa;            /* Roxo suave no modo escuro */
+            --primary-hover: #c4b5fd;
+            --secondary: #c084fc;          
             --secondary-hover: #d8b4fe;
             
-            --header-bg: #1e293b;
-            --table-header: #334155;
-            --table-hover: #2d3748;
-            --table-zebra: #182234;
-            --shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            --header-bg: #334155;
+            --table-header: #475569;
+            --table-hover: #3f4e65;
+            --table-zebra: #2c3a4e;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
             
-            --map-fill: #475569;
-            --map-stroke: #1e293b;
-            --map-hover: #a78bfa;
-            --map-active: #8b5cf6;
+            --map-fill: #64748b;
+            --map-stroke: #334155;
+            --map-hover: #c4b5fd;
+            --map-active: #a78bfa;
             
-            --badge-open-bg: #451a1a;
+            --badge-open-bg: #5c1d1d;
             --badge-open-text: #fca5a5;
-            --badge-closed-bg: #3b0764;
+            --badge-closed-bg: #4c1d95;
             --badge-closed-text: #e9d5ff;
         }
 
@@ -87,7 +87,7 @@
             flex-direction: column;
         }
 
-        /* HEADER FIXO - FULL WIDTH */
+        /* HEADER FIXO */
         header {
             position: sticky;
             top: 0;
@@ -109,6 +109,12 @@
             gap: 1rem;
         }
 
+        .header-title-box {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+
         .header-title {
             display: flex;
             align-items: center;
@@ -118,11 +124,48 @@
             color: var(--primary);
         }
 
+        /* #5: SUBTÍTULO COM O NOME DA EMPRESA BRMOBILITY */
+        .company-subtitle {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding-left: 2.2rem;
+        }
+
         .controls-container {
             display: flex;
             flex-wrap: wrap;
             align-items: center;
             gap: 0.75rem;
+        }
+
+        /* #1 & #2: CABEÇALHO SUPERIOR DIREITO COM AUTOR E DATA DE ATUALIZAÇÃO */
+        .author-info-box {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            justify-content: center;
+            padding: 0.25rem 0.75rem;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.8rem;
+        }
+
+        .author-name {
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .update-timestamp {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.1rem;
         }
 
         .filter-group {
@@ -156,7 +199,6 @@
             color: var(--text-muted);
         }
 
-        /* BOTÃO DE CARREGAR PLANILHA EM ROXO CLARO */
         .btn-upload {
             background-color: var(--secondary);
             color: #0f172a !important;
@@ -222,7 +264,7 @@
             border-bottom-color: var(--primary);
         }
 
-        /* MAIN CONTENT - ESCALA AMPLIADA FULL WIDTH */
+        /* MAIN CONTENT */
         main {
             width: 98%;
             max-width: 1800px;
@@ -251,6 +293,18 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+        }
+
+        /* #4: CARD "EM ABERTO" CLICÁVEL */
+        .kpi-card-clickable {
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .kpi-card-clickable:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(220, 38, 38, 0.15);
+            border-color: #dc2626;
         }
 
         .kpi-info h3 {
@@ -362,7 +416,7 @@
         .badge-open { background-color: var(--badge-open-bg); color: var(--badge-open-text); }
         .badge-closed { background-color: var(--badge-closed-bg); color: var(--badge-closed-text); }
 
-        /* MAPA SVG REDENHADO E CONTORNADO EM ROXO */
+        /* MAPA SVG */
         .map-layout {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -445,7 +499,6 @@
             margin-bottom: 0.5rem;
         }
 
-        /* BOTÃO DE EXPORTAR EM ROXO CLARO */
         .btn-export {
             background-color: var(--secondary);
             color: #0f172a;
@@ -491,9 +544,13 @@
     <!-- HEADER / FILTROS GLOBAIS -->
     <header>
         <div class="header-container">
-            <div class="header-title">
-                <i class="fa-solid fa-headset"></i>
-                <span>RELATÓRIO DE CHAMADOS DETALHADOS</span>
+            <div class="header-title-box">
+                <div class="header-title">
+                    <i class="fa-solid fa-headset"></i>
+                    <span>RELATÓRIO DE CHAMADOS DETALHADOS</span>
+                </div>
+                <!-- #5: Nome da Empresa BRMOBILITY -->
+                <div class="company-subtitle">BRMOBILITY</div>
             </div>
 
             <div class="controls-container">
@@ -538,6 +595,12 @@
                 <div class="filter-group">
                     <i class="fa-solid fa-magnifying-glass"></i>
                     <input type="text" id="filter-search" placeholder="Buscar posto, cliente, OS...">
+                </div>
+
+                <!-- #1 & #2: DADOS DO AUTOR E ÚLTIMA ATUALIZAÇÃO -->
+                <div class="author-info-box">
+                    <div class="author-name"><i class="fa-solid fa-user-gear"></i> Vanessa Rodrigues - operacional</div>
+                    <div class="update-timestamp" id="last-update-text">Atualizado em: --/--/---- --:--</div>
                 </div>
 
                 <!-- Botão Tema -->
@@ -593,15 +656,18 @@
                         <i class="fa-solid fa-circle-check"></i>
                     </div>
                 </div>
-                <div class="kpi-card">
+                
+                <!-- #4: CARD "EM ABERTO" CLICÁVEL -->
+                <div class="kpi-card kpi-card-clickable" id="card-kpi-abertos" title="Clique para filtrar apenas chamados em aberto">
                     <div class="kpi-info">
-                        <h3>Em Aberto</h3>
+                        <h3>Em Aberto <i class="fa-solid fa-arrow-pointer" style="font-size: 0.75rem; color: #dc2626; margin-left: 0.2rem;"></i></h3>
                         <div class="kpi-value" id="kpi-abertos" style="color: #dc2626;">0</div>
                     </div>
                     <div class="kpi-icon" style="background: rgba(220, 38, 38, 0.1); color: #dc2626;">
                         <i class="fa-solid fa-triangle-exclamation"></i>
                     </div>
                 </div>
+
                 <div class="kpi-card">
                     <div class="kpi-info">
                         <h3>Taxa de Solução</h3>
@@ -626,7 +692,7 @@
                 </div>
             </div>
 
-            <div class="table-card">
+            <div class="table-card" id="section-tabela-geral">
                 <div class="table-header-title">
                     <h4><i class="fa-solid fa-list"></i> Todos os Chamados (<span id="count-geral">0</span>)</h4>
                     <button class="btn-export" id="btn-export-geral"><i class="fa-solid fa-file-excel"></i> Exportar Excel</button>
@@ -907,7 +973,7 @@
     </main>
 
     <footer>
-        RELATÓRIO DE CHAMADOS DETALHADOS &copy; 2026
+        RELATÓRIO DE CHAMADOS DETALHADOS &copy; 2026 - BRMOBILITY
     </footer>
 
     <!-- INTEGRAÇÃO COM FIREBASE -->
@@ -938,12 +1004,31 @@
 
         const UF_NORMALIZER = { 'BH': 'MG', 'PV': 'RO' };
 
-        // MAPA CRONOLÓGICO PARA ORDENAÇÃO DOS MESES
         const MONTH_CRONO_ORDER = {
             'JANEIRO': 1, 'FEVEREIRO': 2, 'MARÇO': 3, 'MARCO': 3,
             'ABRIL': 4, 'MAIO': 5, 'JUNHO': 6, 'JULHO': 7,
             'AGOSTO': 8, 'SETEMBRO': 9, 'OUTUBRO': 10, 'NOVEMBRO': 11, 'DEZEMBRO': 12
         };
+
+        // #2: ATUALIZAR TIMESTAMP DA ÚLTIMA ATUALIZAÇÃO
+        function updateLastUpdateTimestamp(isoString) {
+            const el = document.getElementById('last-update-text');
+            if (!isoString) {
+                el.textContent = "Atualizado em: --/--/---- --:--";
+                return;
+            }
+            try {
+                const date = new Date(isoString);
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const year = date.getFullYear();
+                const hours = String(date.getHours()).padStart(2, '0');
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+                el.textContent = `Atualizado em: ${day}/${month}/${year} ${hours}:${minutes}`;
+            } catch(e) {
+                el.textContent = "Atualizado em: --/--/---- --:--";
+            }
+        }
 
         async function loadDataFromFirebase() {
             try {
@@ -951,7 +1036,9 @@
                 const docSnap = await getDoc(docRef);
 
                 if (docSnap.exists()) {
-                    ALL_DATA = docSnap.data().records || [];
+                    const dataObj = docSnap.data();
+                    ALL_DATA = dataObj.records || [];
+                    updateLastUpdateTimestamp(dataObj.updatedAt);
                     populateFilterOptions();
                     applyFilters();
                 } else {
@@ -966,14 +1053,17 @@
         }
 
         async function saveDataToFirebase(records) {
+            const nowIso = new Date().toISOString();
             try {
                 await setDoc(doc(db, "dashboards", "chamados"), {
-                    updatedAt: new Date().toISOString(),
+                    updatedAt: nowIso,
                     records: records
                 });
+                updateLastUpdateTimestamp(nowIso);
                 alert("Dados salvos com sucesso no Firebase!");
             } catch (err) {
                 console.error("Erro ao salvar no Firebase:", err);
+                updateLastUpdateTimestamp(nowIso);
                 alert("Os dados foram carregados localmente. Verifique as regras do Firestore para salvar na nuvem.");
             }
         }
@@ -1043,11 +1133,9 @@
             return String(val).split(' ')[0];
         }
 
-        // #1: ORDENAÇÃO CRONOLÓGICA DOS MESES NOS DROPDOWNS
         function populateFilterOptions() {
             const rawMeses = [...new Set(ALL_DATA.map(d => d.mes))].filter(Boolean);
             
-            // Função comparadora cronológica
             const mesesSorted = rawMeses.sort((a, b) => {
                 const cleanA = a.toString().trim().toUpperCase();
                 const cleanB = b.toString().trim().toUpperCase();
@@ -1165,16 +1253,12 @@
             updateCharts();
         }
 
-        // #2: ATUALIZAÇÃO DAS CORES DOS GRÁFICOS PARA ROXO ESCURO E ROXO CLARO
         function updateCharts() {
             if (!FILTERED_DATA) return;
 
-            // Roxo Escuro para Período e Postos / Roxo Claro para Modelos e Estados
             const colorRoxoEscuro = '#4c1d95';
             const colorRoxoClaro = '#c084fc';
-            const colorAmareloMuted = '#f59e0b';
 
-            // Chamados por Período (Roxo Escuro)
             const mesesCount = {};
             FILTERED_DATA.forEach(d => { mesesCount[d.mes] = (mesesCount[d.mes] || 0) + 1; });
             if (chartMeses) chartMeses.destroy();
@@ -1184,7 +1268,6 @@
                 options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false }
             });
 
-            // Top Postos (Roxo Escuro)
             const postosCount = {};
             FILTERED_DATA.forEach(d => { postosCount[d.posto] = (postosCount[d.posto] || 0) + 1; });
             const topPostos = Object.entries(postosCount).sort((a,b) => b[1] - a[1]).slice(0, 5);
@@ -1195,7 +1278,6 @@
                 options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false }
             });
 
-            // Chamados por Modelo (Roxo Claro)
             const modelosCount = {};
             FILTERED_DATA.forEach(d => { modelosCount[d.modelo] = (modelosCount[d.modelo] || 0) + 1; });
             const modelosSorted = Object.entries(modelosCount).sort((a,b) => b[1] - a[1]);
@@ -1206,7 +1288,6 @@
                 options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false }
             });
 
-            // Estados com Maior Quantidade
             const estadosCount = {};
             FILTERED_DATA.forEach(d => { if (d.uf) estadosCount[d.uf] = (estadosCount[d.uf] || 0) + 1; });
             const estadosSorted = Object.entries(estadosCount).sort((a,b) => b[1] - a[1]).slice(0, 8);
@@ -1400,7 +1481,7 @@
             `).join('');
         }
 
-        // EXPORTAR PARA EXCEL ORGANIZADO COM LINHAS DE GRADE E CABEÇALHO EM NEGRITO
+        // EXPORTAR PARA EXCEL
         function exportToExcel(records, filename) {
             if (!records || records.length === 0) {
                 alert("Não há dados para exportar.");
@@ -1474,6 +1555,16 @@
             if (!currentActiveDetail.value) return;
             const items = FILTERED_DATA.filter(d => d.modelo === currentActiveDetail.value);
             exportToExcel(items, `Relatorio_Modelo_${currentActiveDetail.value.replace(/\s+/g, '_')}`);
+        });
+
+        // #4: EVENTO DE CLIQUE NO CARD "EM ABERTO" DA VISÃO GERAL
+        document.getElementById('card-kpi-abertos').addEventListener('click', () => {
+            const filterStatus = document.getElementById('filter-status');
+            filterStatus.value = 'ABERTO';
+            applyFilters();
+            
+            const targetSection = document.getElementById('section-tabela-geral');
+            targetSection.scrollIntoView({ behavior: 'smooth' });
         });
 
         // EVENT LISTENERS DE NAVEGAÇÃO
