@@ -41,15 +41,15 @@
             --badge-closed-text: #6d28d9;
         }
 
-        /* #2: MODO ESCURO COM TEXTOS SECUNDÁRIOS EM BRANCO PARA MELHOR VISUALIZAÇÃO */
+        /* MODO ESCURO */
         [data-theme="dark"] {
             --bg-color: #1e293b;            
             --card-bg: #334155;            
             --text-color: #ffffff;
-            --text-muted: #ffffff;         /* Textos anteriormente cinza agora ficam brancos */
+            --text-muted: #ffffff;
             --border-color: #475569;
             
-            --primary: #c4b5fd;            /* Roxo claro legível no fundo escuro */
+            --primary: #c4b5fd;            
             --primary-hover: #ddd6fe;
             --secondary: #c084fc;          
             --secondary-hover: #d8b4fe;
@@ -197,6 +197,7 @@
             color: var(--text-muted);
         }
 
+        /* UPLOAD OCULTO POR PADRÃO VIA CSS */
         .btn-upload {
             background-color: var(--secondary);
             color: #0f172a !important;
@@ -204,7 +205,7 @@
             padding: 0.5rem 0.9rem;
             border-radius: 8px;
             cursor: pointer;
-            display: flex;
+            display: none; /* Escondido para não-autenticados */
             align-items: center;
             gap: 0.5rem;
             font-weight: 700;
@@ -212,6 +213,22 @@
         }
 
         .btn-upload:hover { background-color: var(--secondary-hover); }
+
+        .btn-logout {
+            background-color: #dc2626;
+            color: #ffffff !important;
+            border: none;
+            padding: 0.5rem 0.9rem;
+            border-radius: 8px;
+            cursor: pointer;
+            display: none; /* Escondido por padrão */
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 700;
+            font-size: 0.875rem;
+        }
+
+        .btn-logout:hover { background-color: #b91c1c; }
 
         .theme-toggle {
             background-color: var(--bg-color);
@@ -534,6 +551,87 @@
             border-top: 1px solid var(--border-color);
             background-color: var(--card-bg);
             margin-top: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+
+        /* MODAL DE LOGIN ADMIN */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 360px;
+            box-shadow: var(--shadow);
+            color: var(--text-color);
+        }
+
+        .modal-card h3 {
+            margin-bottom: 1.25rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .modal-card input {
+            width: 100%;
+            padding: 0.65rem 0.85rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: var(--bg-color);
+            color: var(--text-color);
+            outline: none;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: flex-end;
+        }
+
+        .btn-login-submit {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-login-cancel {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .login-error {
+            color: #dc2626;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            display: none;
         }
     </style>
 </head>
@@ -551,12 +649,18 @@
             </div>
 
             <div class="controls-container">
-                <!-- Botão de Upload Excel -->
-                <label for="excel-upload" class="btn-upload">
+                <!-- Botão de Upload Excel (Visível apenas para o Admin logado) -->
+                <label for="excel-upload" class="btn-upload" id="btn-upload-label">
                     <i class="fa-solid fa-file-excel"></i>
                     <span>Carregar Planilha</span>
                 </label>
                 <input type="file" id="excel-upload" accept=".xlsx, .xls" style="display: none;">
+
+                <!-- Botão Sair/Logout (Visível apenas quando logado) -->
+                <button class="btn-logout" id="btn-logout">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>Sair</span>
+                </button>
 
                 <!-- Seletor Mês Único -->
                 <div class="filter-group">
@@ -627,7 +731,6 @@
             <button class="nav-tab" data-tab="modelo">
                 <i class="fa-solid fa-microchip"></i> Por Modelo
             </button>
-            <!-- #1: NOVA ABA "POR PROBLEMA REAL" -->
             <button class="nav-tab" data-tab="problema">
                 <i class="fa-solid fa-triangle-exclamation"></i> Por Problema Real
             </button>
@@ -969,7 +1072,7 @@
             </div>
         </section>
 
-        <!-- #1: ABA 6: POR PROBLEMA REAL -->
+        <!-- ABA 6: POR PROBLEMA REAL -->
         <section id="tab-problema" class="tab-content">
             <div id="problema-summary-view">
                 <div class="table-card">
@@ -1025,15 +1128,34 @@
         </section>
     </main>
 
+    <!-- MODAL DE LOGIN RESTREITO -->
+    <div class="modal-overlay" id="login-modal">
+        <div class="modal-card">
+            <h3><i class="fa-solid fa-lock"></i> Acesso Restrito</h3>
+            <input type="email" id="login-email" placeholder="Seu e-mail">
+            <input type="password" id="login-senha" placeholder="Sua senha">
+            <div class="modal-actions">
+                <button class="btn-login-cancel" id="btn-fechar-login">Cancelar</button>
+                <button class="btn-login-submit" id="btn-efetuar-login">Entrar</button>
+            </div>
+            <div class="login-error" id="login-error-msg">E-mail ou senha incorretos!</div>
+        </div>
+    </div>
+
     <footer>
-        RELATÓRIO DE CHAMADOS DETALHADOS &copy; 2026 - BRMOBILITY
+        <span>RELATÓRIO DE CHAMADOS DETALHADOS &copy; 2026 - BRMOBILITY</span>
+        <!-- Botão Discreto de Acesso Restrito -->
+        <button id="btn-abrir-login" style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.8rem;">
+            <i class="fa-solid fa-lock"></i> Área Restrita
+        </button>
     </footer>
 
-    <!-- INTEGRAÇÃO COM FIREBASE -->
+    <!-- INTEGRAÇÃO COM FIREBASE & AUTHENTICATION -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
         import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyC3So20Zjzhy7UlVY5JFfRl5l00NlzMxV8",
@@ -1048,6 +1170,7 @@
         const app = initializeApp(firebaseConfig);
         const analytics = getAnalytics(app);
         const db = getFirestore(app);
+        const auth = getAuth(app);
 
         let ALL_DATA = [];
         let FILTERED_DATA = [];
@@ -1062,6 +1185,57 @@
             'ABRIL': 4, 'MAIO': 5, 'JUNHO': 6, 'JULHO': 7,
             'AGOSTO': 8, 'SETEMBRO': 9, 'OUTUBRO': 10, 'NOVEMBRO': 11, 'DEZEMBRO': 12
         };
+
+        // CONTROLE DE AUTENTICAÇÃO E INTERFACE
+        const btnUploadLabel = document.getElementById('btn-upload-label');
+        const btnLogout = document.getElementById('btn-logout');
+        const btnAbrirLogin = document.getElementById('btn-abrir-login');
+        const loginModal = document.getElementById('login-modal');
+        const btnFecharLogin = document.getElementById('btn-fechar-login');
+        const btnEfetuarLogin = document.getElementById('btn-efetuar-login');
+        const loginErrorMsg = document.getElementById('login-error-msg');
+
+        // Abrir/Fechar Modal
+        btnAbrirLogin.addEventListener('click', () => {
+            loginModal.style.display = 'flex';
+            loginErrorMsg.style.display = 'none';
+        });
+        btnFecharLogin.addEventListener('click', () => loginModal.style.display = 'none');
+
+        // Efetuar Login
+        btnEfetuarLogin.addEventListener('click', async () => {
+            const email = document.getElementById('login-email').value;
+            const senha = document.getElementById('login-senha').value;
+
+            try {
+                await signInWithEmailAndPassword(auth, email, senha);
+                loginModal.style.display = 'none';
+                document.getElementById('login-email').value = '';
+                document.getElementById('login-senha').value = '';
+            } catch (error) {
+                loginErrorMsg.style.display = 'block';
+            }
+        });
+
+        // Efetuar Logout
+        btnLogout.addEventListener('click', () => {
+            signOut(auth);
+        });
+
+        // Observador do Estado de Autenticação (Apenas libera upload para o Admin)
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // Admin autenticado
+                btnUploadLabel.style.display = 'inline-flex';
+                btnLogout.style.display = 'inline-flex';
+                btnAbrirLogin.style.display = 'none';
+            } else {
+                // Usuário Visitante
+                btnUploadLabel.style.display = 'none';
+                btnLogout.style.display = 'none';
+                btnAbrirLogin.style.display = 'inline-block';
+            }
+        });
 
         function updateLastUpdateTimestamp(isoString) {
             const el = document.getElementById('last-update-text');
@@ -1095,12 +1269,12 @@
                     applyFilters();
                 } else {
                     document.getElementById('tbody-geral').innerHTML = 
-                        '<tr><td colspan="14" class="empty-notice"><i class="fa-solid fa-file-excel fa-2x"></i><br><br>Nenhum dado encontrado no Firebase.<br>Clique no botão <strong>"Carregar Planilha"</strong> acima para carregar os dados.</td></tr>';
+                        '<tr><td colspan="14" class="empty-notice"><i class="fa-solid fa-file-excel fa-2x"></i><br><br>Nenhum dado encontrado no Firebase.</td></tr>';
                 }
             } catch (err) {
                 console.error("Erro ao carregar dados do Firebase:", err);
                 document.getElementById('tbody-geral').innerHTML = 
-                    '<tr><td colspan="14" class="empty-notice"><i class="fa-solid fa-file-excel fa-2x"></i><br><br>Clique no botão <strong>"Carregar Planilha"</strong> no menu superior para carregar os dados.</td></tr>';
+                    '<tr><td colspan="14" class="empty-notice"><i class="fa-solid fa-file-excel fa-2x"></i><br><br>Erro ao carregar dados do banco de dados.</td></tr>';
             }
         }
 
@@ -1115,8 +1289,7 @@
                 alert("Dados salvos com sucesso no Firebase!");
             } catch (err) {
                 console.error("Erro ao salvar no Firebase:", err);
-                updateLastUpdateTimestamp(nowIso);
-                alert("Os dados foram carregados localmente. Verifique as regras do Firestore para salvar na nuvem.");
+                alert("Erro ao salvar na nuvem! Verifique se você está autenticado ou revise as regras do Firestore.");
             }
         }
 
@@ -1536,7 +1709,7 @@
             `).join('');
         }
 
-        // #1: ABA PROBLEMA REAL
+        // ABA PROBLEMA REAL
         function renderProblemaTab() {
             const map = {};
             FILTERED_DATA.forEach(d => { 
