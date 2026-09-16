@@ -18,21 +18,28 @@
             --text-color: #0f172a;
             --text-muted: #64748b;
             --border-color: #cbd5e1;
-            --primary: #2563eb;
-            --primary-hover: #1d4ed8;
+            
+            /* #2: PALETA ROXO ESCURO E ROXO CLARO */
+            --primary: #4c1d95;            /* Roxo Escuro */
+            --primary-hover: #3b0764;      /* Roxo Escuro Intenso */
+            --secondary: #c084fc;          /* Roxo Claro */
+            --secondary-hover: #a855f7;    /* Roxo Claro Intenso */
+            
             --header-bg: #ffffff;
-            --table-header: #e2e8f0;
-            --table-hover: #f1f5f9;
-            --table-zebra: #f8fafc;
+            --table-header: #f1f5f9;
+            --table-hover: #f8fafc;
+            --table-zebra: #fdfdfd;
             --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            
             --map-fill: #94a3b8;
             --map-stroke: #ffffff;
-            --map-hover: #2563eb;
-            --map-active: #1d4ed8;
+            --map-hover: #6d28d9;
+            --map-active: #4c1d95;
+            
             --badge-open-bg: #fef2f2;
             --badge-open-text: #dc2626;
-            --badge-closed-bg: #f0fdf4;
-            --badge-closed-text: #16a34a;
+            --badge-closed-bg: #f3e8ff;
+            --badge-closed-text: #6d28d9;
         }
 
         [data-theme="dark"] {
@@ -41,21 +48,27 @@
             --text-color: #f8fafc;
             --text-muted: #94a3b8;
             --border-color: #334155;
-            --primary: #3b82f6;
-            --primary-hover: #60a5fa;
+            
+            --primary: #8b5cf6;            /* Roxo no modo escuro */
+            --primary-hover: #a78bfa;
+            --secondary: #c084fc;          /* Roxo Claro */
+            --secondary-hover: #d8b4fe;
+            
             --header-bg: #1e293b;
             --table-header: #334155;
             --table-hover: #2d3748;
             --table-zebra: #182234;
             --shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            
             --map-fill: #475569;
             --map-stroke: #1e293b;
-            --map-hover: #60a5fa;
-            --map-active: #2563eb;
+            --map-hover: #a78bfa;
+            --map-active: #8b5cf6;
+            
             --badge-open-bg: #451a1a;
             --badge-open-text: #fca5a5;
-            --badge-closed-bg: #14532d;
-            --badge-closed-text: #86efac;
+            --badge-closed-bg: #3b0764;
+            --badge-closed-text: #e9d5ff;
         }
 
         * {
@@ -74,7 +87,7 @@
             flex-direction: column;
         }
 
-        /* HEADER FIXO - ESCALA AMPLIADA FULL WIDTH */
+        /* HEADER FIXO - FULL WIDTH */
         header {
             position: sticky;
             top: 0;
@@ -143,9 +156,10 @@
             color: var(--text-muted);
         }
 
+        /* BOTÃO DE CARREGAR PLANILHA EM ROXO CLARO */
         .btn-upload {
-            background-color: #16a34a;
-            color: #ffffff !important;
+            background-color: var(--secondary);
+            color: #0f172a !important;
             border: none;
             padding: 0.5rem 0.9rem;
             border-radius: 8px;
@@ -153,11 +167,11 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            font-weight: 600;
+            font-weight: 700;
             font-size: 0.875rem;
         }
 
-        .btn-upload:hover { background-color: #15803d; }
+        .btn-upload:hover { background-color: var(--secondary-hover); }
 
         .theme-toggle {
             background-color: var(--bg-color);
@@ -256,7 +270,7 @@
             width: 50px;
             height: 50px;
             border-radius: 12px;
-            background-color: rgba(37, 99, 235, 0.1);
+            background-color: rgba(124, 58, 237, 0.1);
             color: var(--primary);
             display: flex;
             align-items: center;
@@ -286,7 +300,7 @@
             width: 100%;
         }
 
-        /* TABLES - DENSIDADE OTIMIZADA PARA MAIS INFORMAÇÕES */
+        /* TABLES */
         .table-card {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -348,7 +362,7 @@
         .badge-open { background-color: var(--badge-open-bg); color: var(--badge-open-text); }
         .badge-closed { background-color: var(--badge-closed-bg); color: var(--badge-closed-text); }
 
-        /* MAPA SVG REDENHADO E CONTORNADO */
+        /* MAPA SVG REDENHADO E CONTORNADO EM ROXO */
         .map-layout {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -372,7 +386,6 @@
 
         .svg-container { width: 100%; max-width: 520px; }
         
-        /* Contornos definidos e realce vetorial */
         .uf-path {
             fill: var(--map-fill);
             stroke: var(--map-stroke);
@@ -380,7 +393,7 @@
             stroke-linejoin: round;
             stroke-linecap: round;
             cursor: pointer;
-            transition: fill 0.2s, stroke-width 0.2s, transform 0.2s;
+            transition: fill 0.2s, stroke-width 0.2s;
             filter: drop-shadow(0px 1px 2px rgba(0,0,0,0.15));
         }
 
@@ -432,21 +445,22 @@
             margin-bottom: 0.5rem;
         }
 
+        /* BOTÃO DE EXPORTAR EM ROXO CLARO */
         .btn-export {
-            background-color: #16a34a;
-            color: #ffffff;
+            background-color: var(--secondary);
+            color: #0f172a;
             border: none;
             padding: 0.45rem 0.9rem;
             border-radius: 6px;
             cursor: pointer;
             font-size: 0.85rem;
-            font-weight: 600;
+            font-weight: 700;
             display: inline-flex;
             align-items: center;
             gap: 0.4rem;
         }
 
-        .btn-export:hover { background-color: #15803d; }
+        .btn-export:hover { background-color: var(--secondary-hover); }
 
         .empty-notice {
             text-align: center;
@@ -483,14 +497,14 @@
             </div>
 
             <div class="controls-container">
-                <!-- Botão de Upload Excel -->
+                <!-- Botão de Upload Excel em Roxo Claro -->
                 <label for="excel-upload" class="btn-upload">
                     <i class="fa-solid fa-file-excel"></i>
                     <span>Carregar Planilha</span>
                 </label>
                 <input type="file" id="excel-upload" accept=".xlsx, .xls" style="display: none;">
 
-                <!-- #1: Seletor Mês Único / Todos -->
+                <!-- Seletor Mês Único -->
                 <div class="filter-group">
                     <i class="fa-solid fa-calendar-day"></i>
                     <select id="filter-mes-unico">
@@ -924,6 +938,13 @@
 
         const UF_NORMALIZER = { 'BH': 'MG', 'PV': 'RO' };
 
+        // MAPA CRONOLÓGICO PARA ORDENAÇÃO DOS MESES
+        const MONTH_CRONO_ORDER = {
+            'JANEIRO': 1, 'FEVEREIRO': 2, 'MARÇO': 3, 'MARCO': 3,
+            'ABRIL': 4, 'MAIO': 5, 'JUNHO': 6, 'JULHO': 7,
+            'AGOSTO': 8, 'SETEMBRO': 9, 'OUTUBRO': 10, 'NOVEMBRO': 11, 'DEZEMBRO': 12
+        };
+
         async function loadDataFromFirebase() {
             try {
                 const docRef = doc(db, "dashboards", "chamados");
@@ -1022,15 +1043,27 @@
             return String(val).split(' ')[0];
         }
 
-        // #1: POPULAR SELETORES DE MÊS ÚNICO E INTERVALO
+        // #1: ORDENAÇÃO CRONOLÓGICA DOS MESES NOS DROPDOWNS
         function populateFilterOptions() {
-            const meses = [...new Set(ALL_DATA.map(d => d.mes))].filter(Boolean).sort();
+            const rawMeses = [...new Set(ALL_DATA.map(d => d.mes))].filter(Boolean);
+            
+            // Função comparadora cronológica
+            const mesesSorted = rawMeses.sort((a, b) => {
+                const cleanA = a.toString().trim().toUpperCase();
+                const cleanB = b.toString().trim().toUpperCase();
+                
+                const valA = MONTH_CRONO_ORDER[cleanA] || 99;
+                const valB = MONTH_CRONO_ORDER[cleanB] || 99;
+
+                if (valA !== valB) return valA - valB;
+                return a.localeCompare(b);
+            });
             
             const filterMesUnico = document.getElementById('filter-mes-unico');
             const filterPeriodoInicio = document.getElementById('filter-periodo-inicio');
             const filterPeriodoFim = document.getElementById('filter-periodo-fim');
 
-            const optionsHtml = meses.map(m => `<option value="${m}">${m}</option>`).join('');
+            const optionsHtml = mesesSorted.map(m => `<option value="${m}">${m}</option>`).join('');
 
             filterMesUnico.innerHTML = '<option value="TODOS">Todos os Meses</option>' + optionsHtml;
             filterPeriodoInicio.innerHTML = '<option value="TODOS">Início</option>' + optionsHtml;
@@ -1049,16 +1082,18 @@
             const status = document.getElementById('filter-status').value;
             const search = document.getElementById('filter-search').value.toLowerCase().trim();
 
-            const todosMeses = [...new Set(ALL_DATA.map(d => d.mes))].filter(Boolean).sort();
+            const todosMeses = [...new Set(ALL_DATA.map(d => d.mes))].filter(Boolean).sort((a,b) => {
+                const valA = MONTH_CRONO_ORDER[a.toUpperCase()] || 99;
+                const valB = MONTH_CRONO_ORDER[b.toUpperCase()] || 99;
+                return valA - valB;
+            });
 
             FILTERED_DATA = ALL_DATA.filter(item => {
                 let matchPeriodo = true;
 
-                // Prioridade 1: Se for selecionado um mês único no dropdown
                 if (mesUnico !== 'TODOS') {
                     matchPeriodo = (item.mes === mesUnico);
                 } 
-                // Prioridade 2: Se houver seleção por intervalo (Início / Fim)
                 else if (pInicio !== 'TODOS' || pFim !== 'TODOS') {
                     const idxItem = todosMeses.indexOf(item.mes);
                     const idxInicio = pInicio !== 'TODOS' ? todosMeses.indexOf(pInicio) : 0;
@@ -1130,45 +1165,55 @@
             updateCharts();
         }
 
+        // #2: ATUALIZAÇÃO DAS CORES DOS GRÁFICOS PARA ROXO ESCURO E ROXO CLARO
         function updateCharts() {
             if (!FILTERED_DATA) return;
 
+            // Roxo Escuro para Período e Postos / Roxo Claro para Modelos e Estados
+            const colorRoxoEscuro = '#4c1d95';
+            const colorRoxoClaro = '#c084fc';
+            const colorAmareloMuted = '#f59e0b';
+
+            // Chamados por Período (Roxo Escuro)
             const mesesCount = {};
             FILTERED_DATA.forEach(d => { mesesCount[d.mes] = (mesesCount[d.mes] || 0) + 1; });
             if (chartMeses) chartMeses.destroy();
             chartMeses = new Chart(document.getElementById('chart-meses'), {
                 type: 'bar',
-                data: { labels: Object.keys(mesesCount), datasets: [{ label: 'Chamados', data: Object.values(mesesCount), backgroundColor: '#2563eb' }] },
+                data: { labels: Object.keys(mesesCount), datasets: [{ label: 'Chamados', data: Object.values(mesesCount), backgroundColor: colorRoxoEscuro }] },
                 options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false }
             });
 
+            // Top Postos (Roxo Escuro)
             const postosCount = {};
             FILTERED_DATA.forEach(d => { postosCount[d.posto] = (postosCount[d.posto] || 0) + 1; });
             const topPostos = Object.entries(postosCount).sort((a,b) => b[1] - a[1]).slice(0, 5);
             if (chartTopPostos) chartTopPostos.destroy();
             chartTopPostos = new Chart(document.getElementById('chart-top-postos'), {
                 type: 'bar',
-                data: { labels: topPostos.map(p => p[0]), datasets: [{ label: 'Chamados', data: topPostos.map(p => p[1]), backgroundColor: '#3b82f6' }] },
+                data: { labels: topPostos.map(p => p[0]), datasets: [{ label: 'Chamados', data: topPostos.map(p => p[1]), backgroundColor: colorRoxoEscuro }] },
                 options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false }
             });
 
+            // Chamados por Modelo (Roxo Claro)
             const modelosCount = {};
             FILTERED_DATA.forEach(d => { modelosCount[d.modelo] = (modelosCount[d.modelo] || 0) + 1; });
             const modelosSorted = Object.entries(modelosCount).sort((a,b) => b[1] - a[1]);
             if (chartModelos) chartModelos.destroy();
             chartModelos = new Chart(document.getElementById('chart-modelos'), {
                 type: 'bar',
-                data: { labels: modelosSorted.map(m => m[0]), datasets: [{ label: 'Chamados', data: modelosSorted.map(m => m[1]), backgroundColor: '#10b981' }] },
+                data: { labels: modelosSorted.map(m => m[0]), datasets: [{ label: 'Chamados', data: modelosSorted.map(m => m[1]), backgroundColor: colorRoxoClaro }] },
                 options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false }
             });
 
+            // Estados com Maior Quantidade
             const estadosCount = {};
             FILTERED_DATA.forEach(d => { if (d.uf) estadosCount[d.uf] = (estadosCount[d.uf] || 0) + 1; });
             const estadosSorted = Object.entries(estadosCount).sort((a,b) => b[1] - a[1]).slice(0, 8);
             if (chartEstados) chartEstados.destroy();
             chartEstados = new Chart(document.getElementById('chart-estados'), {
                 type: 'bar',
-                data: { labels: estadosSorted.map(e => e[0]), datasets: [{ label: 'Chamados', data: estadosSorted.map(e => e[1]), backgroundColor: '#f59e0b' }] },
+                data: { labels: estadosSorted.map(e => e[0]), datasets: [{ label: 'Chamados', data: estadosSorted.map(e => e[1]), backgroundColor: colorRoxoEscuro }] },
                 options: { responsive: true, maintainAspectRatio: false }
             });
         }
@@ -1355,7 +1400,7 @@
             `).join('');
         }
 
-        // #2: EXPORTAR PARA EXCEL ORGANIZADO COM LINHAS DE GRADE E CABEÇALHO EM NEGRITO
+        // EXPORTAR PARA EXCEL ORGANIZADO COM LINHAS DE GRADE E CABEÇALHO EM NEGRITO
         function exportToExcel(records, filename) {
             if (!records || records.length === 0) {
                 alert("Não há dados para exportar.");
@@ -1381,10 +1426,8 @@
 
             const worksheet = XLSX.utils.json_to_sheet(exportData);
 
-            // Ativa exibição de linhas de grade
             worksheet['!views'] = [{ showGridLines: true }];
 
-            // Ajusta automaticamente a largura das colunas
             const colWidths = Object.keys(exportData[0]).map(key => {
                 const maxLen = Math.max(
                     key.length,
@@ -1394,14 +1437,13 @@
             });
             worksheet['!cols'] = colWidths;
 
-            // Formatação do cabeçalho em negrito
             const range = XLSX.utils.decode_range(worksheet['!ref']);
             for (let C = range.s.c; C <= range.e.c; ++C) {
                 const address = XLSX.utils.encode_cell({ r: 0, c: C });
                 if (!worksheet[address]) continue;
                 worksheet[address].s = {
                     font: { bold: true, color: { rgb: "FFFFFF" } },
-                    fill: { fgColor: { rgb: "1E293B" } },
+                    fill: { fgColor: { rgb: "4C1D95" } },
                     alignment: { horizontal: "center", vertical: "center" }
                 };
             }
