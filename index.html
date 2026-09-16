@@ -41,16 +41,16 @@
             --badge-closed-text: #6d28d9;
         }
 
-        /* #3: MODO ESCURO SUAVIZADO (POUCO MENOS INTENSO) */
+        /* #2: MODO ESCURO COM TEXTOS SECUNDÁRIOS EM BRANCO PARA MELHOR VISUALIZAÇÃO */
         [data-theme="dark"] {
-            --bg-color: #1e293b;            /* Fundo ligeiramente mais claro que o anterior */
-            --card-bg: #334155;            /* Cards com contraste suave */
-            --text-color: #f8fafc;
-            --text-muted: #cbd5e1;
+            --bg-color: #1e293b;            
+            --card-bg: #334155;            
+            --text-color: #ffffff;
+            --text-muted: #ffffff;         /* Textos anteriormente cinza agora ficam brancos */
             --border-color: #475569;
             
-            --primary: #a78bfa;            /* Roxo suave no modo escuro */
-            --primary-hover: #c4b5fd;
+            --primary: #c4b5fd;            /* Roxo claro legível no fundo escuro */
+            --primary-hover: #ddd6fe;
             --secondary: #c084fc;          
             --secondary-hover: #d8b4fe;
             
@@ -68,7 +68,7 @@
             --badge-open-bg: #5c1d1d;
             --badge-open-text: #fca5a5;
             --badge-closed-bg: #4c1d95;
-            --badge-closed-text: #e9d5ff;
+            --badge-closed-text: #ffffff;
         }
 
         * {
@@ -124,7 +124,6 @@
             color: var(--primary);
         }
 
-        /* #5: SUBTÍTULO COM O NOME DA EMPRESA BRMOBILITY */
         .company-subtitle {
             font-size: 0.85rem;
             font-weight: 700;
@@ -141,7 +140,6 @@
             gap: 0.75rem;
         }
 
-        /* #1 & #2: CABEÇALHO SUPERIOR DIREITO COM AUTOR E DATA DE ATUALIZAÇÃO */
         .author-info-box {
             display: flex;
             flex-direction: column;
@@ -295,7 +293,6 @@
             justify-content: space-between;
         }
 
-        /* #4: CARD "EM ABERTO" CLICÁVEL */
         .kpi-card-clickable {
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s;
@@ -395,6 +392,7 @@
             white-space: nowrap;
             font-weight: 700;
             z-index: 10;
+            color: var(--text-color);
         }
 
         td {
@@ -549,12 +547,11 @@
                     <i class="fa-solid fa-headset"></i>
                     <span>RELATÓRIO DE CHAMADOS DETALHADOS</span>
                 </div>
-                <!-- #5: Nome da Empresa BRMOBILITY -->
                 <div class="company-subtitle">BRMOBILITY</div>
             </div>
 
             <div class="controls-container">
-                <!-- Botão de Upload Excel em Roxo Claro -->
+                <!-- Botão de Upload Excel -->
                 <label for="excel-upload" class="btn-upload">
                     <i class="fa-solid fa-file-excel"></i>
                     <span>Carregar Planilha</span>
@@ -597,7 +594,7 @@
                     <input type="text" id="filter-search" placeholder="Buscar posto, cliente, OS...">
                 </div>
 
-                <!-- #1 & #2: DADOS DO AUTOR E ÚLTIMA ATUALIZAÇÃO -->
+                <!-- DADOS DO AUTOR E ÚLTIMA ATUALIZAÇÃO -->
                 <div class="author-info-box">
                     <div class="author-name"><i class="fa-solid fa-user-gear"></i> Vanessa Rodrigues - operacional</div>
                     <div class="update-timestamp" id="last-update-text">Atualizado em: --/--/---- --:--</div>
@@ -630,6 +627,10 @@
             <button class="nav-tab" data-tab="modelo">
                 <i class="fa-solid fa-microchip"></i> Por Modelo
             </button>
+            <!-- #1: NOVA ABA "POR PROBLEMA REAL" -->
+            <button class="nav-tab" data-tab="problema">
+                <i class="fa-solid fa-triangle-exclamation"></i> Por Problema Real
+            </button>
         </div>
     </nav>
 
@@ -656,8 +657,6 @@
                         <i class="fa-solid fa-circle-check"></i>
                     </div>
                 </div>
-                
-                <!-- #4: CARD "EM ABERTO" CLICÁVEL -->
                 <div class="kpi-card kpi-card-clickable" id="card-kpi-abertos" title="Clique para filtrar apenas chamados em aberto">
                     <div class="kpi-info">
                         <h3>Em Aberto <i class="fa-solid fa-arrow-pointer" style="font-size: 0.75rem; color: #dc2626; margin-left: 0.2rem;"></i></h3>
@@ -667,7 +666,6 @@
                         <i class="fa-solid fa-triangle-exclamation"></i>
                     </div>
                 </div>
-
                 <div class="kpi-card">
                     <div class="kpi-info">
                         <h3>Taxa de Solução</h3>
@@ -970,6 +968,61 @@
                 </div>
             </div>
         </section>
+
+        <!-- #1: ABA 6: POR PROBLEMA REAL -->
+        <section id="tab-problema" class="tab-content">
+            <div id="problema-summary-view">
+                <div class="table-card">
+                    <div class="table-header-title">
+                        <h4><i class="fa-solid fa-triangle-exclamation"></i> Resumo por Problema Real</h4>
+                    </div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Problema Real</th>
+                                    <th>Total de Chamados</th>
+                                    <th>Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody-problema-summary"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div id="problema-detail-view" style="display: none;">
+                <div class="detail-header-actions">
+                    <button class="btn-back" id="btn-back-problema"><i class="fa-solid fa-arrow-left"></i> Voltar para Lista de Problemas</button>
+                    <button class="btn-export" id="btn-export-problema"><i class="fa-solid fa-file-excel"></i> Exportar Excel</button>
+                </div>
+                <div class="table-card">
+                    <div class="table-header-title"><h4 id="problema-detail-title">Detalhes do Problema Real</h4></div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Mês</th>
+                                    <th>Abertura</th>
+                                    <th>Chamado</th>
+                                    <th>OS</th>
+                                    <th>Serial</th>
+                                    <th>Modelo</th>
+                                    <th>Posto</th>
+                                    <th>Cliente</th>
+                                    <th>SLA</th>
+                                    <th>UF</th>
+                                    <th>Problema Real</th>
+                                    <th>Encerramento</th>
+                                    <th>Status</th>
+                                    <th>Solução</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody-problema-detail"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
 
     <footer>
@@ -1010,7 +1063,6 @@
             'AGOSTO': 8, 'SETEMBRO': 9, 'OUTUBRO': 10, 'NOVEMBRO': 11, 'DEZEMBRO': 12
         };
 
-        // #2: ATUALIZAR TIMESTAMP DA ÚLTIMA ATUALIZAÇÃO
         function updateLastUpdateTimestamp(isoString) {
             const el = document.getElementById('last-update-text');
             if (!isoString) {
@@ -1211,6 +1263,7 @@
             renderPostoTab();
             renderClienteTab();
             renderModeloTab();
+            renderProblemaTab();
         }
 
         function renderVisaoGeral() {
@@ -1350,7 +1403,7 @@
             `).join('') : '<tr><td colspan="14" style="text-align: center;">Nenhum chamado neste estado.</td></tr>';
         }
 
-        // ABAS POSTO, CLIENTE, MODELO
+        // ABA POSTO
         function renderPostoTab() {
             const map = {};
             FILTERED_DATA.forEach(d => { map[d.posto] = map[d.posto] || { nome: d.posto, uf: d.uf, total: 0 }; map[d.posto].total++; });
@@ -1395,6 +1448,7 @@
             `).join('');
         }
 
+        // ABA CLIENTE
         function renderClienteTab() {
             const map = {};
             FILTERED_DATA.forEach(d => { map[d.cliente] = map[d.cliente] || { nome: d.cliente, total: 0 }; map[d.cliente].total++; });
@@ -1438,6 +1492,7 @@
             `).join('');
         }
 
+        // ABA MODELO
         function renderModeloTab() {
             const map = {};
             FILTERED_DATA.forEach(d => { map[d.modelo] = map[d.modelo] || { nome: d.modelo, total: 0 }; map[d.modelo].total++; });
@@ -1462,6 +1517,54 @@
             document.getElementById('modelo-detail-title').textContent = `Modelo: ${nome}`;
             const items = FILTERED_DATA.filter(d => d.modelo === nome);
             document.getElementById('tbody-modelo-detail').innerHTML = items.map(d => `
+                <tr>
+                    <td>${d.mes}</td>
+                    <td>${formatDate(d.dataAbertura)}</td>
+                    <td><strong>#${d.chamado}</strong></td>
+                    <td>${d.os || '-'}</td>
+                    <td>${d.serial}</td>
+                    <td>${d.modelo}</td>
+                    <td>${d.posto}</td>
+                    <td>${d.cliente}</td>
+                    <td>${d.sla || '-'}</td>
+                    <td><span class="badge" style="background: var(--border-color);">${d.uf}</span></td>
+                    <td>${d.problema}</td>
+                    <td>${formatDate(d.dataEncerramento)}</td>
+                    <td>${getStatusBadge(d.status)}</td>
+                    <td>${d.solucao || '-'}</td>
+                </tr>
+            `).join('');
+        }
+
+        // #1: ABA PROBLEMA REAL
+        function renderProblemaTab() {
+            const map = {};
+            FILTERED_DATA.forEach(d => { 
+                const prob = d.problema || 'NÃO INFORMADO';
+                map[prob] = map[prob] || { nome: prob, total: 0 }; 
+                map[prob].total++; 
+            });
+            const tbody = document.getElementById('tbody-problema-summary');
+            tbody.innerHTML = Object.values(map).sort((a,b) => b.total - a.total).map(p => `
+                <tr>
+                    <td><strong>${p.nome}</strong></td>
+                    <td><strong>${p.total}</strong></td>
+                    <td><button class="btn-back btn-problema-detail" data-nome="${escapeQuotes(p.nome)}">Detalhar</button></td>
+                </tr>
+            `).join('');
+
+            document.querySelectorAll('.btn-problema-detail').forEach(btn => {
+                btn.addEventListener('click', (e) => openProblemaDetail(e.target.getAttribute('data-nome')));
+            });
+        }
+
+        function openProblemaDetail(nome) {
+            currentActiveDetail = { type: 'problema', value: nome };
+            document.getElementById('problema-summary-view').style.display = 'none';
+            document.getElementById('problema-detail-view').style.display = 'block';
+            document.getElementById('problema-detail-title').textContent = `Problema Real: ${nome}`;
+            const items = FILTERED_DATA.filter(d => (d.problema || 'NÃO INFORMADO') === nome);
+            document.getElementById('tbody-problema-detail').innerHTML = items.map(d => `
                 <tr>
                     <td>${d.mes}</td>
                     <td>${formatDate(d.dataAbertura)}</td>
@@ -1556,8 +1659,13 @@
             const items = FILTERED_DATA.filter(d => d.modelo === currentActiveDetail.value);
             exportToExcel(items, `Relatorio_Modelo_${currentActiveDetail.value.replace(/\s+/g, '_')}`);
         });
+        document.getElementById('btn-export-problema').addEventListener('click', () => {
+            if (!currentActiveDetail.value) return;
+            const items = FILTERED_DATA.filter(d => (d.problema || 'NÃO INFORMADO') === currentActiveDetail.value);
+            exportToExcel(items, `Relatorio_Problema_${currentActiveDetail.value.replace(/\s+/g, '_')}`);
+        });
 
-        // #4: EVENTO DE CLIQUE NO CARD "EM ABERTO" DA VISÃO GERAL
+        // EVENTO DE CLIQUE NO CARD "EM ABERTO" DA VISÃO GERAL
         document.getElementById('card-kpi-abertos').addEventListener('click', () => {
             const filterStatus = document.getElementById('filter-status');
             filterStatus.value = 'ABERTO';
@@ -1624,6 +1732,11 @@
         document.getElementById('btn-back-modelo').addEventListener('click', () => {
             document.getElementById('modelo-summary-view').style.display = 'block';
             document.getElementById('modelo-detail-view').style.display = 'none';
+        });
+
+        document.getElementById('btn-back-problema').addEventListener('click', () => {
+            document.getElementById('problema-summary-view').style.display = 'block';
+            document.getElementById('problema-detail-view').style.display = 'none';
         });
 
         function getStatusBadge(status) {
