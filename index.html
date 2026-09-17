@@ -19,10 +19,11 @@
             --text-muted: #64748b;
             --border-color: #cbd5e1;
             
-            --primary: #4c1d95;            /* Roxo Escuro */
-            --primary-hover: #3b0764;      /* Roxo Escuro Intenso */
-            --secondary: #c084fc;          /* Roxo Claro */
-            --secondary-hover: #a855f7;    /* Roxo Claro Intenso */
+            /* PALETA VERDE ÁGUA / PETRÓLEO */
+            --primary: #0f766e;            /* Verde Petróleo */
+            --primary-hover: #042f2e;      /* Verde Petróleo Escuro */
+            --secondary: #14b8a6;          /* Verde Água Vibrante */
+            --secondary-hover: #0d9488;    /* Verde Água Intenso */
             
             --header-bg: #ffffff;
             --table-header: #f1f5f9;
@@ -32,43 +33,51 @@
             
             --map-fill: #94a3b8;
             --map-stroke: #ffffff;
-            --map-hover: #6d28d9;
-            --map-active: #4c1d95;
+            --map-hover: #0d9488;
+            --map-active: #0f766e;
             
             --badge-open-bg: #fef2f2;
             --badge-open-text: #dc2626;
-            --badge-closed-bg: #f3e8ff;
-            --badge-closed-text: #6d28d9;
+            --badge-closed-bg: #ccfbf1;
+            --badge-closed-text: #0f766e;
+
+            /* LOGO CORES (MODO CLARO) */
+            --logo-br: #50b7c1;
+            --logo-mobility: #0f172a;
         }
 
-        /* MODO ESCURO OPTIMIZADO PARA ALTO CONTRASTE E CONFORTO VISUAL */
+        /* MODO ESCURO OPTIMIZADO */
         [data-theme="dark"] {
-            --bg-color: #0f172a;            /* Fundo principal escuro e suave */
-            --card-bg: #1e293b;            /* Cards com contraste ideal */
-            --text-color: #f8fafc;          /* Letras/números em branco puro de alta nitidez */
-            --text-muted: #94a3b8;          /* Textos secundários legíveis sem ofuscar */
-            --border-color: #334155;        /* Bordas sutis e bem definidas */
+            --bg-color: #0b131a;            /* Fundo escuro azulado/petróleo muito profundo */
+            --card-bg: #13222d;            /* Cards petróleos escuros */
+            --text-color: #f8fafc;          /* Letras em branco puro de alta nitidez */
+            --text-muted: #94a3b8;          
+            --border-color: #1e3a45;        
             
-            --primary: #a78bfa;            /* Roxo vibrante de alta visibilidade */
-            --primary-hover: #c4b5fd;
-            --secondary: #c084fc;          
-            --secondary-hover: #d8b4fe;
+            --primary: #14b8a6;            /* Verde Água Vibrante */
+            --primary-hover: #2dd4bf;
+            --secondary: #0d9488;          
+            --secondary-hover: #14b8a6;
             
-            --header-bg: #1e293b;
-            --table-header: #334155;        /* Cabeçalho da tabela destacado */
-            --table-hover: #334155;         /* Linhas com realce suave ao passar o mouse */
-            --table-zebra: #182232;         /* Zebrado contrastante para leitura de dados */
+            --header-bg: #13222d;
+            --table-header: #1e3a45;        
+            --table-hover: #1d3340;         
+            --table-zebra: #0e1a24;         
             --shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
             
-            --map-fill: #475569;
-            --map-stroke: #1e293b;
-            --map-hover: #a78bfa;
-            --map-active: #8b5cf6;
+            --map-fill: #2d4d5a;
+            --map-stroke: #13222d;
+            --map-hover: #2dd4bf;
+            --map-active: #14b8a6;
             
             --badge-open-bg: #451a1a;
             --badge-open-text: #fca5a5;
-            --badge-closed-bg: #3b0764;
-            --badge-closed-text: #e9d5ff;
+            --badge-closed-bg: #042f2e;
+            --badge-closed-text: #5eead4;
+
+            /* LOGO CORES (MODO ESCURO - TROCANDO A COR DE BRANCA PARA PRETA / OU BRANCA CONFORME SOLICITADO) */
+            --logo-br: #50b7c1;
+            --logo-mobility: #ffffff;
         }
 
         * {
@@ -109,28 +118,32 @@
             gap: 1rem;
         }
 
+        .brand-box {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* ESTILO DA LOGO BRMOBILITY */
+        .logo-svg {
+            height: 32px;
+            width: auto;
+        }
+
         .header-title-box {
             display: flex;
             flex-direction: column;
             gap: 0.15rem;
+            margin-left: auto; /* Desloca para o canto direito */
         }
 
         .header-title {
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            font-size: 1.35rem;
+            font-size: 1.25rem;
             font-weight: 700;
             color: var(--primary);
-        }
-
-        .company-subtitle {
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: var(--text-muted);
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            padding-left: 2.2rem;
         }
 
         .controls-container {
@@ -200,7 +213,7 @@
         /* UPLOAD OCULTO POR PADRÃO VIA CSS */
         .btn-upload {
             background-color: var(--secondary);
-            color: #0f172a !important;
+            color: #ffffff !important;
             border: none;
             padding: 0.5rem 0.9rem;
             border-radius: 8px;
@@ -338,7 +351,7 @@
             width: 50px;
             height: 50px;
             border-radius: 12px;
-            background-color: rgba(124, 58, 237, 0.1);
+            background-color: rgba(20, 184, 166, 0.1);
             color: var(--primary);
             display: flex;
             align-items: center;
@@ -516,7 +529,7 @@
 
         .btn-export {
             background-color: var(--secondary);
-            color: #0f172a;
+            color: #ffffff;
             border: none;
             padding: 0.45rem 0.9rem;
             border-radius: 6px;
@@ -640,12 +653,20 @@
     <!-- HEADER / FILTROS GLOBAIS -->
     <header>
         <div class="header-container">
+            <!-- LOGO BRMOBILITY NO CANTO ESQUERDO -->
+            <div class="brand-box">
+                <svg class="logo-svg" viewBox="0 0 240 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <text x="0" y="32" font-family="'Segoe UI', sans-serif" font-weight="900" font-size="34" fill="var(--logo-br)" letter-spacing="1">BR</text>
+                    <text x="50" y="32" font-family="'Segoe UI', sans-serif" font-weight="900" font-size="34" fill="var(--logo-mobility)" letter-spacing="1">MOBILITY</text>
+                </svg>
+            </div>
+
+            <!-- TÍTULO DESLOCADO PARA O CANTO DIREITO -->
             <div class="header-title-box">
                 <div class="header-title">
                     <i class="fa-solid fa-headset"></i>
                     <span>RELATÓRIO DE CHAMADOS DETALHADOS</span>
                 </div>
-                <div class="company-subtitle">BRMOBILITY</div>
             </div>
 
             <div class="controls-container">
@@ -1128,7 +1149,7 @@
         </section>
     </main>
 
-    <!-- MODAL DE LOGIN RESTREITO (com autocomplete para isolar o preenchimento) -->
+    <!-- MODAL DE LOGIN RESTREITO -->
     <div class="modal-overlay" id="login-modal">
         <div class="modal-card">
             <h3><i class="fa-solid fa-lock"></i> Acesso Restrito</h3>
@@ -1488,8 +1509,9 @@
             const textColor = isDark ? '#ffffff' : '#475569';
             const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
 
-            const colorRoxoEscuro = isDark ? '#a78bfa' : '#4c1d95';
-            const colorRoxoClaro = isDark ? '#c084fc' : '#8b5cf6';
+            /* CORES DOS GRÁFICOS AJUSTADAS PARA O VERDE ÁGUA / PETRÓLEO */
+            const colorVerdePetroleo = isDark ? '#14b8a6' : '#0f766e';
+            const colorVerdeAgua = isDark ? '#2dd4bf' : '#14b8a6';
 
             const chartOptions = {
                 responsive: true,
@@ -1516,7 +1538,7 @@
             if (chartMeses) chartMeses.destroy();
             chartMeses = new Chart(document.getElementById('chart-meses'), {
                 type: 'bar',
-                data: { labels: Object.keys(mesesCount), datasets: [{ label: 'Chamados', data: Object.values(mesesCount), backgroundColor: colorRoxoEscuro }] },
+                data: { labels: Object.keys(mesesCount), datasets: [{ label: 'Chamados', data: Object.values(mesesCount), backgroundColor: colorVerdePetroleo }] },
                 options: { ...chartOptions, indexAxis: 'y' }
             });
 
@@ -1526,7 +1548,7 @@
             if (chartTopPostos) chartTopPostos.destroy();
             chartTopPostos = new Chart(document.getElementById('chart-top-postos'), {
                 type: 'bar',
-                data: { labels: topPostos.map(p => p[0]), datasets: [{ label: 'Chamados', data: topPostos.map(p => p[1]), backgroundColor: colorRoxoEscuro }] },
+                data: { labels: topPostos.map(p => p[0]), datasets: [{ label: 'Chamados', data: topPostos.map(p => p[1]), backgroundColor: colorVerdePetroleo }] },
                 options: { ...chartOptions, indexAxis: 'y' }
             });
 
@@ -1536,7 +1558,7 @@
             if (chartModelos) chartModelos.destroy();
             chartModelos = new Chart(document.getElementById('chart-modelos'), {
                 type: 'bar',
-                data: { labels: modelosSorted.map(m => m[0]), datasets: [{ label: 'Chamados', data: modelosSorted.map(m => m[1]), backgroundColor: colorRoxoClaro }] },
+                data: { labels: modelosSorted.map(m => m[0]), datasets: [{ label: 'Chamados', data: modelosSorted.map(m => m[1]), backgroundColor: colorVerdeAgua }] },
                 options: { ...chartOptions, indexAxis: 'y' }
             });
 
@@ -1546,7 +1568,7 @@
             if (chartEstados) chartEstados.destroy();
             chartEstados = new Chart(document.getElementById('chart-estados'), {
                 type: 'bar',
-                data: { labels: estadosSorted.map(e => e[0]), datasets: [{ label: 'Chamados', data: estadosSorted.map(e => e[1]), backgroundColor: colorRoxoEscuro }] },
+                data: { labels: estadosSorted.map(e => e[0]), datasets: [{ label: 'Chamados', data: estadosSorted.map(e => e[1]), backgroundColor: colorVerdePetroleo }] },
                 options: chartOptions
             });
         }
@@ -1826,7 +1848,7 @@
                 if (!worksheet[address]) continue;
                 worksheet[address].s = {
                     font: { bold: true, color: { rgb: "FFFFFF" } },
-                    fill: { fgColor: { rgb: "4C1D95" } },
+                    fill: { fgColor: { rgb: "0F766E" } },
                     alignment: { horizontal: "center", vertical: "center" }
                 };
             }
