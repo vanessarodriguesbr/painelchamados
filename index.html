@@ -1482,8 +1482,32 @@
         function updateCharts() {
             if (!FILTERED_DATA) return;
 
-            const colorRoxoEscuro = '#4c1d95';
-            const colorRoxoClaro = '#c084fc';
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const textColor = isDark ? '#ffffff' : '#475569';
+            const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+
+            const colorRoxoEscuro = isDark ? '#a78bfa' : '#4c1d95';
+            const colorRoxoClaro = isDark ? '#c084fc' : '#8b5cf6';
+
+            const chartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: { color: textColor, font: { weight: 'bold' } }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: { color: textColor, font: { weight: '600' } },
+                        grid: { color: gridColor }
+                    },
+                    y: {
+                        ticks: { color: textColor, font: { weight: '600' } },
+                        grid: { color: gridColor }
+                    }
+                }
+            };
 
             const mesesCount = {};
             FILTERED_DATA.forEach(d => { mesesCount[d.mes] = (mesesCount[d.mes] || 0) + 1; });
@@ -1491,7 +1515,7 @@
             chartMeses = new Chart(document.getElementById('chart-meses'), {
                 type: 'bar',
                 data: { labels: Object.keys(mesesCount), datasets: [{ label: 'Chamados', data: Object.values(mesesCount), backgroundColor: colorRoxoEscuro }] },
-                options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false }
+                options: { ...chartOptions, indexAxis: 'y' }
             });
 
             const postosCount = {};
@@ -1501,7 +1525,7 @@
             chartTopPostos = new Chart(document.getElementById('chart-top-postos'), {
                 type: 'bar',
                 data: { labels: topPostos.map(p => p[0]), datasets: [{ label: 'Chamados', data: topPostos.map(p => p[1]), backgroundColor: colorRoxoEscuro }] },
-                options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false }
+                options: { ...chartOptions, indexAxis: 'y' }
             });
 
             const modelosCount = {};
@@ -1511,7 +1535,7 @@
             chartModelos = new Chart(document.getElementById('chart-modelos'), {
                 type: 'bar',
                 data: { labels: modelosSorted.map(m => m[0]), datasets: [{ label: 'Chamados', data: modelosSorted.map(m => m[1]), backgroundColor: colorRoxoClaro }] },
-                options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false }
+                options: { ...chartOptions, indexAxis: 'y' }
             });
 
             const estadosCount = {};
@@ -1521,7 +1545,7 @@
             chartEstados = new Chart(document.getElementById('chart-estados'), {
                 type: 'bar',
                 data: { labels: estadosSorted.map(e => e[0]), datasets: [{ label: 'Chamados', data: estadosSorted.map(e => e[1]), backgroundColor: colorRoxoEscuro }] },
-                options: { responsive: true, maintainAspectRatio: false }
+                options: chartOptions
             });
         }
 
