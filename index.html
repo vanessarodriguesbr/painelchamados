@@ -692,10 +692,10 @@
                     </select>
                 </div>
 
-                <!-- Campo de Busca Global -->
+                <!-- Campo de Busca Global (Com autocomplete="off" para evitar o e-mail) -->
                 <div class="filter-group">
                     <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" id="filter-search" placeholder="Buscar posto, cliente, OS...">
+                    <input type="text" id="filter-search" name="search_filter" autocomplete="off" placeholder="Buscar posto, cliente, OS...">
                 </div>
 
                 <!-- DADOS DO AUTOR E ÚLTIMA ATUALIZAÇÃO -->
@@ -1128,16 +1128,18 @@
         </section>
     </main>
 
-    <!-- MODAL DE LOGIN RESTREITO -->
+    <!-- MODAL DE LOGIN RESTREITO (com autocomplete para isolar o preenchimento) -->
     <div class="modal-overlay" id="login-modal">
         <div class="modal-card">
             <h3><i class="fa-solid fa-lock"></i> Acesso Restrito</h3>
-            <input type="email" id="login-email" placeholder="Seu e-mail">
-            <input type="password" id="login-senha" placeholder="Sua senha">
-            <div class="modal-actions">
-                <button class="btn-login-cancel" id="btn-fechar-login">Cancelar</button>
-                <button class="btn-login-submit" id="btn-efetuar-login">Entrar</button>
-            </div>
+            <form autocomplete="off" onsubmit="return false;">
+                <input type="email" id="login-email" name="user_login_email" autocomplete="username" placeholder="Seu e-mail">
+                <input type="password" id="login-senha" name="user_login_password" autocomplete="current-password" placeholder="Sua senha">
+                <div class="modal-actions">
+                    <button type="button" class="btn-login-cancel" id="btn-fechar-login">Cancelar</button>
+                    <button type="button" class="btn-login-submit" id="btn-efetuar-login">Entrar</button>
+                </div>
+            </form>
             <div class="login-error" id="login-error-msg">E-mail ou senha incorretos!</div>
         </div>
     </div>
